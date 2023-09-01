@@ -123,13 +123,29 @@ In a call to deallocate this is an INOUT argument which returns with an "invalid
 MPI provides an "invalid handle" constant for each object type.
 Comparisons to this constant are used to test for validity of the handle.
 
+不透明オブジェクトは、各オブジェクトタイプに固有の呼び出しによって割り当てと割り当て解除が行われる。
+これらの呼び出しは、オブジェクトが説明されているセクションにリストされている。
+呼び出しは、型が一致する handle 引数を受け取ります。
+allocate呼び出しでは、これはオブジェクトへの有効な参照を返すOUT引数である。
+deallocate呼び出しでは、これは "invalid handle "値で返すINOUT引数です。
+MPIは各オブジェクト型に対して "無効なハンドル "定数を提供します。
+この定数との比較がハンドルの有効性をテストするために使用されます。
+
 A call to a deallocate routine invalidates the handle and marks the object for deallocation.
 The object is not accessible to the user after the call. However, MPI need not deallocate the object immediately.
 Any operation pending (at the time of the deallocate) that involves this object will complete normally; the object will be deallocated afterwards.
 
+deallocateルーチンを呼び出すと、ハンドルは無効になり、そのオブジェクトは割り当て解除される。
+この呼び出しの後、ユーザはオブジェクトにアクセスできなくなります。しかし、MPIは直ちにオブジェクトを解放する必要はありません。
+deallocateされた時点で保留されている、このオブジェクトに関係する操作はすべて正常に完了し、オブジェクトはその後にdeallocateされます。
+
 An opaque object and its handle are significant only at the process where the object was created and cannot be transferred to another process.
 MPI provides certain predefined opaque objects and predefined, static handles to these objects.
 The user must not free such objects.
+
+不透明オブジェクトとそのハンドルは、そのオブジェクトが作成されたプロセスでのみ重要であり、他のプロセスに転送することはできません。
+MPIは、特定の定義済み不透明オブジェクトと、これらのオブジェクトへの定義済み静的ハンドルを提供します。
+ユーザはそのようなオブジェクトを解放してはいけません。
 
 NOTE: *Rationale.*
 This design hides the internal representation used for MPI data structures, thus allowing similar calls in C and Fortran.
@@ -144,16 +160,40 @@ The alternative in C would have been to allow handles to have been an arbitrary,
 This would force the introduction of routines to do assignment and comparison, adding complexity, and was therefore ruled out.
 In Fortran, the handles are defined such that assignment and comparison are available through the operators of the language or overloaded versions of these operators. (End of rationale.)
 
+NOTE: *根拠*
+この設計は、MPIデータ構造に使用される内部表現を隠蔽するため、CやFortranでも同様の呼び出しが可能です。
+また、これらの言語の型付け規則との衝突を回避し、将来的な機能拡張を容易にします。
+ここで使用されている不透明オブジェクトのメカニズムは、POSIX Fortranバインディング標準に緩く従っています。 +
+ユーザー空間のハンドルとシステム空間のオブジェクトを明示的に分離することで、ユーザープログラムの適切な箇所で空間奪還と解放の呼び出しを行うことができる。
+不透明なオブジェクトがユーザー空間にあった場合、そのオブジェクトを必要とする保留中の操作が完了する前にスコープ外に出ないように、細心の注意を払わなければならない。
+指定された設計では、オブジェクトに割り当て解除のマークを付けることができ、ユーザー・プログラムはスコープ外に出ることができる。 +
+ハンドルの割り当て/比較をサポートするという要件は、そのような操作が一般的であるためです。
+これにより、実装可能な領域が制限される。
+C言語の代替案としては、ハンドルを任意の不透明な型にすることも可能であっただろう。
+この場合、代入と比較を行うルーチンを導入しなければならなくなり、複雑さが増すため、除外されました。
+Fortranでは、ハンドルの代入と比較は、その言語の演算子か、これらの演算子のオーバーロード版で利用できるように定義されています。(根拠終わり)
+
 NOTE: *Advice to users.*
 A user may accidentally create a dangling reference by assigning to a handle the value of another handle, and then deallocating the object associated with these handles.
 Conversely, if a handle variable is deallocated before the associated object is freed, then the object becomes inaccessible (this may occur, for example, if the handle is a local variable within a subroutine, and the subroutine is exited before the associated object is deallocated).
 It is the user’s responsibility to avoid adding or deleting references to opaque objects, except as a result of MPI calls that allocate or deallocate such objects. (End of advice to users.)
+
+NOTE: *ユーザへのアドバイス*
+ユーザは、ハンドルに別のハンドルの値を代入し、その後これらのハンドルに関連付けられたオブジェクトを解放することで、誤ってぶら下がり参照を作成する可能性があります。
+逆に、関連するオブジェクトが解放される前にハンドル変数が解放されると、そのオブジェクトはアクセスできなくなります（例えば、ハンドルがサブルーチン内のローカル変数であり、関連するオブジェクトが解放される前にサブルーチンが終了した場合などに、このような現象が発生する可能性があります）。
+不透明なオブジェクトへの参照を追加したり削除したりしないようにするのは、そのようなオブジェクトを割り当てたり解放したりするMPI呼び出しの結果以外では、ユーザの責任です。(ユーザへの忠告を終わります)。
 
 NOTE: *Advice to implementors.*
 The intended semantics of opaque objects is that opaque objects are separate from one another; each call to allocate such an object copies all the information required for the object.
 Implementations may avoid excessive copying by substituting referencing for copying.
 For example, a derived datatype may contain references to its components, rather than copies of its components; a call to MPI_COMM_GROUP may return a reference to the group associated with the communicator, rather than a copy of this group.
 In such cases, the implementation must maintain reference counts, and allocate and deallocate objects in such a way that the visible effect is as if the objects were copied. (End of advice to implementors.)
+
+NOTE: *実装者へのアドバイス*
+不透明オブジェクトの意図されたセマンティクスは、不透明オブジェクトは互いに分離しているということです。そのようなオブジェクトを割り当てるための各呼び出しは、そのオブジェクトに必要なすべての情報をコピーします。
+実装では、コピーの代わりに参照を使用することで、過剰なコピーを避けることができる。
+MPI_COMM_GROUP を呼び出すと、そのグループのコピーではなく、コミュニケータに関連付けられたグループへの参照が返されます。
+このような場合、実装は参照カウントを維持し、オブジェクトがコピーされたかのように見えるようにオブジェクトを割り当てたり、割り当て解除したりしなければなりません。(実装者へのアドバイスはここまで）。
 
 
 ==== 2.5.2 Array Arguments
