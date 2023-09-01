@@ -115,6 +115,46 @@ NOTE: *ユーザへのアドバイス*
 もし、ユーザが mpif.h または mpi モジュールを mpi_f08 モジュールで置き換えたい場合で、アプリケーションプログラムが Fortran 共通ブロックにハンドルを格納する場合、この共通ブロックを使用するすべてのアプリケーションルーチンで Fortran サポートメソッドを変更する必要があります。
 (ユーザーへのアドバイスの終わり)
 
+Opaque objects are allocated and deallocated by calls that are specific to each object type.
+These are listed in the sections where the objects are described.
+The calls accept a handle argument of matching type.
+In an allocate call this is an OUT argument that returns a valid reference to the object.
+In a call to deallocate this is an INOUT argument which returns with an "invalid handle" value.
+MPI provides an "invalid handle" constant for each object type.
+Comparisons to this constant are used to test for validity of the handle.
+
+A call to a deallocate routine invalidates the handle and marks the object for deallocation.
+The object is not accessible to the user after the call. However, MPI need not deallocate the object immediately.
+Any operation pending (at the time of the deallocate) that involves this object will complete normally; the object will be deallocated afterwards.
+
+An opaque object and its handle are significant only at the process where the object was created and cannot be transferred to another process.
+MPI provides certain predefined opaque objects and predefined, static handles to these objects.
+The user must not free such objects.
+
+NOTE: *Rationale.*
+This design hides the internal representation used for MPI data structures, thus allowing similar calls in C and Fortran.
+It also avoids conflicts with the typing rules in these languages, and easily allows future extensions of functionality.
+The mechanism for opaque objects used here loosely follows the POSIX Fortran binding standard. +
+The explicit separation of handles in user space and objects in system space allows space-reclaiming and deallocation calls to be made at appropriate points in the user program.
+If the opaque objects were in user space, one would have to be very careful not to go out of scope before any pending operation requiring that object completed.
+The specified design allows an object to be marked for deallocation, the user program can then go out of scope, and the object itself still persists until any pending operations are complete. +
+The requirement that handles support assignment/comparison is made since such operations are common.
+This restricts the domain of possible implementations.
+The alternative in C would have been to allow handles to have been an arbitrary, opaque type.
+This would force the introduction of routines to do assignment and comparison, adding complexity, and was therefore ruled out.
+In Fortran, the handles are defined such that assignment and comparison are available through the operators of the language or overloaded versions of these operators. (End of rationale.)
+
+NOTE: *Advice to users.*
+A user may accidentally create a dangling reference by assigning to a handle the value of another handle, and then deallocating the object associated with these handles.
+Conversely, if a handle variable is deallocated before the associated object is freed, then the object becomes inaccessible (this may occur, for example, if the handle is a local variable within a subroutine, and the subroutine is exited before the associated object is deallocated).
+It is the user’s responsibility to avoid adding or deleting references to opaque objects, except as a result of MPI calls that allocate or deallocate such objects. (End of advice to users.)
+
+NOTE: *Advice to implementors.*
+The intended semantics of opaque objects is that opaque objects are separate from one another; each call to allocate such an object copies all the information required for the object.
+Implementations may avoid excessive copying by substituting referencing for copying.
+For example, a derived datatype may contain references to its components, rather than copies of its components; a call to MPI_COMM_GROUP may return a reference to the group associated with the communicator, rather than a copy of this group.
+In such cases, the implementation must maintain reference counts, and allocate and deallocate objects in such a way that the visible effect is as if the objects were copied. (End of advice to implementors.)
+
 
 ==== 2.5.2 Array Arguments
 
