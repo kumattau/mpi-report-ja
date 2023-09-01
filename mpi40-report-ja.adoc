@@ -4,7 +4,45 @@
 
 === 1.1 Overview and Goals
 
+=== 1.2 Background of MPI-1.0
+
+=== 1.3 Background of MPI-1.1, MPI-1.2, and MPI-2.0
+
+=== 1.4 Background of MPI-1.3 and MPI-2.1
+
+=== 1.5 Background of MPI-2.2
+
+=== 1.6 Background of MPI-3.0
+
+=== 1.7 Background of MPI-3.1
+
+=== 1.8 Background of MPI-4.0
+
+=== 1.9 Who Should Use This Standard?
+
+=== 1.10 What Platforms Are Targets for Implementation?
+
+=== 1.11 What Is Included in the Standard?
+
+=== 1.12 What Is Not Included in the Standard?
+
+=== 1.13 Organization of This Document
+
 == Chapter 2 MPI Terms and Conventions
+
+=== 2.1 Document Notation
+
+=== 2.2 Naming Conventions
+
+=== 2.3 Procedure Specification
+
+=== 2.4 Semantic Terms
+
+==== 2.4.1 MPI Operations
+
+==== 2.4.2 MPI Procedures
+
+==== 2.4.3 MPI Datatypes
 
 === 2.5 Datatypes
 
@@ -77,6 +115,10 @@ NOTE: *ユーザへのアドバイス*
 もし、ユーザが mpif.h または mpi モジュールを mpi_f08 モジュールで置き換えたい場合で、アプリケーションプログラムが Fortran 共通ブロックにハンドルを格納する場合、この共通ブロックを使用するすべてのアプリケーションルーチンで Fortran サポートメソッドを変更する必要があります。
 (ユーザーへのアドバイスの終わり)
 
+
+==== 2.5.2 Array Arguments
+
+==== 2.5.3 State
 
 ==== 2.5.4 Named Constants
 
@@ -165,6 +207,26 @@ Fortranでは、これらの特殊な定数の実装は、Fortran標準外の言
 サブルーチン内部では、このアドレスはFortran標準外の何らかのメカニズム（例えば、Fortranの拡張やCでの関数の実装）によって抽出することができます。
 (実装者へのアドバイスの終わり)
 
+
+==== 2.5.5 Choice
+
+==== 2.5.6 Absolute Addresses and Relative Address Displacements
+
+==== 2.5.7 File Offsets
+
+==== 2.5.8 Counts
+
+=== 2.6 Language Binding
+
+==== 2.6.1 Deprecated and Removed Interfaces
+
+==== 2.6.2 Fortran Binding Issues
+
+==== 2.6.3 C Binding Issues
+
+==== 2.6.4 Functions and Macros
+
+=== 2.7 Processes
 
 === 2.8 Error Handling
 
@@ -263,3 +325,11 @@ MPI defines a way for users to create new error codes as defined in Section 9.5.
 
 MPIは、セクション9.5で定義されているように、ユーザが新しいエラーコードを作成する方法を定義しています。
 
+
+=== 2.9 Implementation Issues
+
+==== 2.9.1 Independence of Basic Runtime Routines
+
+==== 2.9.2 Interaction with Signals
+
+=== 2.10 Examples
