@@ -1,0 +1,265 @@
+= MPI: A Message-Passing Interface Standard Version 4.0
+
+== Chapter 1 Introduction to MPI
+
+=== 1.1 Overview and Goals
+
+== Chapter 2 MPI Terms and Conventions
+
+=== 2.5 Datatypes
+
+==== 2.5.1 Opaque Objects
+
+MPI manages system memory that is used for buffering messages and for storing internal representations of various MPI objects such as groups, communicators, datatypes, etc.
+This memory is not directly accessible to the user, and objects stored there are opaque: their size and shape is not visible to the user.
+Opaque objects are accessed via handles, which exist in user space.
+MPI procedures that operate on opaque objects are passed handle arguments to access these objects.
+In addition to their use by MPI calls for object access, handles can participate in assignments and comparisons.
+
+MPIは、メッセージのバッファリングや、グループ、コミュニケータ、データ型などの様々なMPIオブジェクトの内部表現を格納するために使用されるシステムメモリを管理します。 
+このメモリはユーザが直接アクセスできるものではなく、そこに格納されたオブジェクトは不透明です。
+不透明なオブジェクトは、ユーザ空間に存在するハンドルを介してアクセスされます。
+不透明オブジェクトを操作するMPI手続きは、これらのオブジェクトにアクセスするためにハンドル引数を渡されます。
+MPI呼び出しによるオブジェクトへのアクセスに加えて、ハンドルは代入や比較に参加することができます。
+
+In Fortran with USE mpi or INCLUDE 'mpif.h', all handles have type INTEGER.
+In Fortran with USE mpi_f08, and in C, a different handle type is defined for each category of objects.
+With Fortran USE mpi_f08, the handles are defined as Fortran BIND(C) derived types that consist of only one element INTEGER :: MPI_VAL.
+The internal handle value is identical to the Fortran INTEGER value used in the mpi module and mpif.h.
+The operators ".EQ.", ".NE.", "==" and "/=" are overloaded to allow the comparison of these handles.
+The type names are identical to the names in C, except that they are not case sensitive.
+
+USE mpi または INCLUDE 'mpif.h' を使用する Fortran では、すべてのハンドルの型は INTEGER です。
+USE mpi_f08 を使用する Fortran および C では、オブジェクトのカテゴリごとに異なるハンドル型が定義されます。
+USE mpi_f08 を使用する Fortran では、ハンドルは1つの要素 INTEGER :: MPI_VAL です。
+内部ハンドルの値は mpi モジュールと mpif.h で使用される Fortran INTEGER と同じです。
+演算子 ".EQ.", ".NE.", "==", "/=" はこれらのハンドルの比較を可能にするためにオーバーロードされます。
+型名は、大文字と小文字を区別しないことを除いて、C言語の型名と同じです。
+
+[source,fortran]
+----
+TYPE, BIND(C) :: MPI_Comm
+  INTEGER :: MPI_VAL
+END TYPE MPI_Comm
+----
+
+The C types must support the use of the assignment and equality operators.
+
+Cの型は、代入演算子と等号演算子の使用をサポートしなければならない。
+
+NOTE: *Advice to implementors.*
+In Fortran, the handle can be an index into a table of opaque objects in a system table; in C it can be such an index or a pointer to the object.
+(End of advice to implementors.)
+
+NOTE: *実装者へのアドバイス*
+Fortranでは、ハンドルはシステム・テーブル内の不透明オブジェクトのテーブルへのインデックスである。
+(実装者へのアドバイスの終わり)
+
+NOTE: *Rationale.*
+Since the Fortran integer values are equivalent, applications can easily convert MPI handles between all three supported Fortran methods.
+For example, an integer communicator handle COMM can be converted directly into an exactly equivalent mpi_f08 communicator handle named comm_f08 by comm_f08%MPI_VAL=COMM, and vice versa.
+The use of the INTEGER defined handles and the BIND(C) derived type handles is different: Fortran 2003 (and later) define that BIND(C) derived types can be used within user defined common blocks, but it is up to the rules of the companion C compiler how many numerical storage units are used for these BIND(C) derived type handles.
+Most compilers use one unit for both, the INTEGER handles and the handles defined as BIND(C) derived types.
+(End of rationale.)
+
+NOTE: *根拠*
+Fortranの整数値は等価であるため、アプリケーションはサポートされている3つのFortranメソッド間でMPIハンドルを簡単に変換することができます。
+例えば、整数値のコミュニケータハンドルCOMMはcomm_f08%MPI_VAL=COMMによってcomm_f08 という名前の mpi_f08 コミュニケータハンドルに直接変換することができます。
+INTEGER定義ハンドルとBIND©派生型ハンドルの使用方法は異なります: Fortran 2003(およびそれ以降)では、BIND(C)派生型はユーザ定義の共通ブロック内で使用できると定義されていますが、これらのBIND(C)派生型ハンドルに何個の数値記憶ユニットを使用するかはコンパイラの規則次第です。
+ほとんどのコンパイラは、INTEGERハンドルとBIND©派生型として定義されたハンドルの両方に1単位を使用します。
+(根拠終わり)
+
+NOTE: *Advice to users.*
+If a user wants to substitute mpif.h or the mpi module by the mpi_f08 module and the application program stores a handle in a Fortran common block then it is necessary to change the Fortran support method in all application routines that use this common block, because the number of numerical storage units of such a handle can be different in the two modules.
+(End of advice to users.)
+
+NOTE: *ユーザへのアドバイス*
+もし、ユーザが mpif.h または mpi モジュールを mpi_f08 モジュールで置き換えたい場合で、アプリケーションプログラムが Fortran 共通ブロックにハンドルを格納する場合、この共通ブロックを使用するすべてのアプリケーションルーチンで Fortran サポートメソッドを変更する必要があります。
+(ユーザーへのアドバイスの終わり)
+
+
+==== 2.5.4 Named Constants
+
+MPI procedures sometimes assign a special meaning to a special value of a basic type argument; e.g., tag is an integer-valued argument of point-to-point communication operations, with a special wild-card value, MPI_ANY_TAG.
+Such arguments will have a range of regular values, which is a proper subrange of the range of values of the corresponding basic type; special values (such as MPI_ANY_TAG) will be outside the regular range.
+The range of regular values, such as tag, can be queried using environmental inquiry functions, see Chapter 9.
+The range of other values, such as source, depends on values given by other MPI routines (in the case of source it is the communicator size).
+
+MPI手続きは、基本型の引数の特別な値に特別な意味を割り当てることがあります。例えば、tagはポイントツーポイント通信操作の整数値の引数で、MPI_ANY_TAGという特別なワイルドカード値を持ちます。
+このような引数には、対応する基本型の値の範囲の適切な部分範囲である正規値の範囲があります。特殊な値(MPI_ANY_TAGなど)は正規の範囲外となります。
+tagのような正規値の範囲は、環境問い合わせ関数を使用して問い合わせることができます。
+source のような他の値の範囲は、他の MPI ルーチンで与えられた値に依存します (source の場合はコミュニケータサイズです)。
+
+MPI also provides predefined named constant handles, such as MPI_COMM_WORLD.
+
+MPI は MPI_COMM_WORLD のような定義済みの名前付き定数ハンドルも提供します。
+
+All named constants, with the exceptions noted below for Fortran, can be used in initialization expressions or assignments, but not necessarily in array declarations or as labels in C switch or Fortran select/case statements.
+This implies named constants to be link-time but not necessarily compile-time constants.
+The named constants listed below are required to be compile-time constants in both C and Fortran.
+These constants do not change values during execution.
+Opaque objects accessed by constant handles are defined and do not change value between MPI initialization (MPI_INIT) and MPI completion (MPI_FINALIZE).
+The handles themselves are constants and can be also used in initialization expressions or assignments.
+
+すべての名前付き定数は、Fortranの例外を除いて、初期化式や代入で使用することができますが、配列宣言やCのswitch文やFortranのselect/case文のラベルとして使用することはできません。
+これは、名前付き定数がリンク時定数であることを意味しますが、コンパイル時定数であるとは限りません。
+以下に挙げる名前付き定数は、CでもFortranでもコンパイル時定数であることが要求される。
+これらの定数は実行中に値が変わることはありません。
+定数ハンドルによってアクセスされる不透明オブジェクトは、MPI の初期化 (MPI_INIT) から MPI の完了 (MPI_FINALIZE) までの間、値が変化しないように定義されています。
+ハンドル自体は定数であり、初期化式や代入で使用することもできます。
+
+The constants that are required to be compile-time constants (and can thus be used for array length declarations and labels in C switch and Fortran case/select statements) are:
+
+コンパイル時定数として要求される定数(配列の長さの宣言やCのswitchやFortranのcase/select文のラベルに使用できる)は以下の通りです:
+
+[source]
+----
+MPI_MAX_PROCESSOR_NAME
+MPI_MAX_LIBRARY_VERSION_STRING
+MPI_MAX_ERROR_STRING
+MPI_MAX_DATAREP_STRING
+MPI_MAX_INFO_KEY
+MPI_MAX_INFO_VAL
+MPI_MAX_OBJECT_NAME
+MPI_MAX_PORT_NAME
+MPI_VERSION
+MPI_SUBVERSION
+MPI_F_STATUS_SIZE (C only)
+MPI_STATUS_SIZE (Fortran only)
+MPI_ADDRESS_KIND (Fortran only)
+MPI_COUNT_KIND (Fortran only)
+MPI_INTEGER_KIND (Fortran only)
+MPI_OFFSET_KIND (Fortran only)
+MPI_SUBARRAYS_SUPPORTED (Fortran only)
+MPI_ASYNC_PROTECTS_NONBLOCKING (Fortran only)
+----
+
+The constants that cannot be used in initialization expressions or assignments in Fortran are as follows:
+
+Fortranの初期化式や代入で使用できない定数は以下の通りである:
+
+[source]
+----
+MPI_BOTTOM
+MPI_STATUS_IGNORE
+MPI_STATUSES_IGNORE
+MPI_ERRCODES_IGNORE
+MPI_IN_PLACE
+MPI_ARGV_NULL
+MPI_ARGVS_NULL
+MPI_UNWEIGHTED
+MPI_WEIGHTS_EMPTY
+----
+
+NOTE: *Advice to implementors.*
+In Fortran the implementation of these special constants may require the use of language constructs that are outside the Fortran standard.
+Using special values for the constants (e.g., by defining them through PARAMETER statements) is not possible because an implementation cannot distinguish these values from valid data.
+Typically, these constants are implemented as predefined static variables (e.g., a variable in an MPI-declared COMMON block), relying on the fact that the target compiler passes data by address. 
+Inside the subroutine, this address can be extracted by some mechanism outside the Fortran standard (e.g., by Fortran extensions or by implementing the function in C).
+(End of advice to implementors.)
+
+NOTE: *実装者へのアドバイス*
+Fortranでは、これらの特殊な定数の実装は、Fortran標準外の言語構造を使用する必要があるかもしれません。
+実装がこれらの値を有効なデータと区別することができないため、定数に特別な値を使用する（例えば、PARAMETER文で定義する）ことはできません。
+通常、これらの定数は、ターゲットコンパイラがアドレスによってデータを渡すという事実に依存して、定義済みの静的変数（例えば、MPI宣言されたCOMMONブロック内の変数）として実装されます。
+サブルーチン内部では、このアドレスはFortran標準外の何らかのメカニズム（例えば、Fortranの拡張やCでの関数の実装）によって抽出することができます。
+(実装者へのアドバイスの終わり)
+
+
+=== 2.8 Error Handling
+
+MPI provides the user with reliable message transmission. A message sent is always received correctly, and the user does not need to check for transmission errors, time-outs, or other error conditions.
+In other words, MPI does not provide mechanisms for dealing with transmission failures in the communication system.
+If the MPI implementation is built on an unreliable underlying mechanism, then it is the job of the implementor of the MPI subsystem to insulate the user from this unreliability, and to reflect only unrecoverable transmission failures.
+Whenever possible, such failures will be reflected as errors in the relevant communication call.
+
+MPIは信頼性の高いメッセージ伝送をユーザーに提供します。
+送信されたメッセージは常に正しく受信され、ユーザは送信エラーやタイムアウトなどのエラー状態をチェックする必要がありません。
+言い換えれば、MPIは通信システムにおける伝送障害に対処する機構を提供しません。
+もしMPIの実装が信頼性の低い機構の上に構築されているのであれば、MPIサブシステムの実装者は、この信頼性の低さからユーザを隔離し、回復不可能な伝送障害だけを反映させるのが仕事です。
+可能な限り、そのような失敗は関連する通信呼び出しのエラーとして反映されます。
+
+Similarly, MPI itself provides no mechanisms for handling MPI process failures, that is, when an MPI process unexpectedly and permanently stops communicating (e.g., a software or hardware crash results in an MPI process terminating unexpectedly).
+
+同様に、MPI自身はMPIプロセスの障害、つまりMPIプロセスが予期せず永続的に通信を停止した場合（例えば、ソフトウェアやハードウェアのクラッシュによりMPIプロセスが予期せず終了した場合）を処理するメカニズムを提供していません。
+
+Of course, MPI programs may still be erroneous.
+A program error can occur when an MPI call is made with an incorrect argument (non-existing destination in a send operation, buffer too small in a receive operation, etc.).
+This type of error would occur in any implementation.
+In addition, a resource error may occur when a program exceeds the amount of available system resources (number of pending messages, system buffers, etc.).
+
+もちろん、MPIプログラムにもエラーはあります。
+プログラムのエラーは、MPIコールに不正な引数（送信操作で宛先が存在しない、受信操作でバッファが小さすぎる、など）が指定された場合に発生します。
+この種のエラーはどのような実装でも発生します。
+さらに、リソースエラーは、プログラムが利用可能なシステムリソースの量（保留中のメッセージの数、システムバッファなど）を超えた場合に発生する可能性があります。
+
+The occurrence of this type of error depends on the amount of available resources in the system and the resource allocation mechanism used; this may differ from system to system.
+A high-quality implementation will provide generous limits on the important resources so as to alleviate the portability problem this represents.
+
+この種のエラーの発生は、システムで利用可能なリソースの量と、使用されるリソース割り当てメカニズムに依存する。
+高品質な実装では、重要なリソースに寛大な制限を設け、これが示す移植性の問題を緩和する。
+
+In C and Fortran, almost all MPI calls return a code that indicates successful completion of the operation.
+Whenever possible, MPI calls return an error code if an error occurred during the call.
+By default, an error detected during the execution of the MPI library causes the parallel computation to abort, except for file operations.
+However, MPI provides mechanisms for users to change this default and to handle recoverable errors. 
+The user may specify that no error is fatal, and handle error codes returned by MPI calls by themselves.
+Also, the user may provide user-defined error-handling routines, which will be invoked whenever an MPI call returns abnormally.
+The MPI error handling facilities are described in Section 9.3.
+
+CおよびFortranでは、ほとんどすべてのMPIコールは操作の正常終了を示すコードを返します。
+MPIコールは可能な限り、コール中にエラーが発生した場合にエラーコードを返します。
+デフォルトでは、MPIライブラリの実行中に検出されたエラーは、ファイル操作を除いて並列計算を中断させます。
+しかし、MPIはユーザがこのデフォルトを変更し、回復可能なエラーを処理するための機構を提供します。
+ユーザは、致命的なエラーでないことを指定し、MPIコールから返されるエラーコードを自分で処理することができます。
+また、ユーザ定義エラー処理ルーチンを用意し、MPIコールが異常終了したときに呼び出すこともできます。
+MPIエラー処理機能については9.3節で説明します。
+
+Several factors limit the ability of MPI calls to return with meaningful error codes when an error occurs.
+MPI may not be able to detect some errors; other errors may be too expensive to detect in normal execution mode; some faults (e.g., memory faults) may corrupt the state of the MPI library and its outputs; finally some errors may be "catastrophic" and may prevent MPI from returning control to the caller.
+On the other hand, some errors may be detected after the associated operation has completed; some errors may not have a communicator, window, or file on which an error may be raised.
+In such cases, these errors will be raised on the communicator MPI_COMM_SELF when using the World Model (see Section 11.2).
+When MPI_COMM_SELF is not initialized (i.e., before MPI_INIT / MPI_INIT_THREAD, after MPI_FINALIZE, or when using the Sessions Model exclusively) the error raises the initial error handler (set during the launch operation, see 11.8.4).
+The Sessions Model is described in Section 11.3.
+
+MPIコールがエラー発生時に意味のあるエラーコードを返すことを制限するいくつかの要因があります。
+あるエラー(例えば、メモリエラー)はMPIライブラリとその出力の状態を壊してしまう可能性があります。
+一方、エラーの中には、関連する操作が完了した後に検出されるものもあります。
+また、エラーが発生するようなコミュニケータ、ウィンドウ、ファイルが存在しないものもあります。
+そのような場合、ワールドモデル(セクション11.2を参照)を使用する場合、これらのエラーはコミュニケータMPI_COMM_SELF上で発生します。
+MPI_COMM_SELF が初期化されていない場合 (MPI_INIT / MPI_INIT_THREAD の前、MPI_FINALIZE の後、またはセッションズモデルのみを使用している場合)、エラーは初期エラーハンドラ (起動操作中に設定されます。11.8.4 参照) を発生させます。
+セッションズ・モデルについてはセクション11.3で説明します。
+
+An example of such a case arises because of the nature of asynchronous communications: MPI calls may initiate operations that continue asynchronously after the call returned.
+Thus, the operation may return with a code indicating successful completion, yet later cause an error to be raised.
+If there is a subsequent call that relates to the same operation (e.g., a call that verifies that an asynchronous operation has completed) then the error argument associated with this call will be used to indicate the nature of the error.
+In a few cases, the error may occur after all calls that relate to the operation have completed, so that no error value can be used to indicate the nature of the error (e.g., an error on the receiver in a send with the ready mode).
+
+非同期通信の性質上、このようなケースが発生する: MPI呼び出しは、呼び出しが返った後も非同期で継続する操作を開始することがあります。
+MPIコールは、コールが返った後も非同期に継続するオペレーションを開始することがあります。
+したがって、オペレーションが正常に完了したことを示すコードで返ったにもかかわらず、後でエラーが発生することがあります。
+同じ操作に関連する後続の呼び出し(例えば、非同期操作が完了したことを確認する呼び出し)がある場合、この呼び出しに関連するエラー引数は、エラーの性質を示すために使用されます。
+場合によっては、操作に関連するすべての呼が完了した後にエラーが発生し、 エラー値を使用してエラーの性質を示すことができないことがある(たとえば、 レディモードでの送信における受信側のエラー)。
+
+This document does not specify the state of a computation after an erroneous MPI call has occurred.
+The desired behavior is that a relevant error code be returned, and the effect of the error be localized to the greatest possible extent.
+E.g., it is highly desirable that an erroneous receive call will not cause any part of the receiver's memory to be overwritten, beyond the area specified for receiving the message.
+
+この文書では、誤ったMPIコールが発生した後の計算の状態については規定しない。
+望ましい動作は、関連するエラーコードが返され、エラーの影響が可能な限り局所化されることです。
+例えば、誤った受信呼び出しが発生しても、メッセージを受信するために指定された領域を超えて、受信側のメモリの一部が上書きされないことが非常に望ましい。
+
+Implementations may go beyond this document in supporting in a meaningful manner MPI calls that are defined here to be erroneous.
+For example, MPI specifies strict type matching rules between matching send and receive operations: it is erroneous to send a floating point variable and receive an integer.
+Implementations may go beyond these type matching rules, and provide automatic type conversion in such situations.
+It will be helpful to generate warnings for such nonconforming behavior.
+
+実装は、ここで誤りと定義されているMPIコールを意味のある形でサポートするために、このドキュメントを越えてもよい。
+例えば、MPIは送信操作と受信操作のマッチングに厳格な型マッチングルールを規定しています: 浮動小数点変数を送信して整数を受信することは誤りです。
+実装は、これらの型照合ルールを超えて、そのような状況で自動的な型変換を提供するかもしれません。
+そのような不適合な動作に対する警告を生成することは有益であろう。
+
+MPI defines a way for users to create new error codes as defined in Section 9.5.
+
+MPIは、セクション9.5で定義されているように、ユーザが新しいエラーコードを作成する方法を定義しています。
+
