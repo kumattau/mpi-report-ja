@@ -83,14 +83,14 @@ END TYPE MPI_Comm
 
 The C types must support the use of the assignment and equality operators.
 
-Cの型は、代入演算子と等号演算子の使用をサポートしなければならない。
+Cの型は、代入演算子と等号演算子の使用をサポートしなければなりません。
 
 NOTE: *Advice to implementors.*
 In Fortran, the handle can be an index into a table of opaque objects in a system table; in C it can be such an index or a pointer to the object.
 (End of advice to implementors.)
 
 NOTE: *実装者へのアドバイス*
-Fortranでは、ハンドルはシステム・テーブル内の不透明オブジェクトのテーブルへのインデックスである。
+Fortranでは、ハンドルはシステム・テーブル内の不透明オブジェクトのテーブルへのインデックスです。
 (実装者へのアドバイスの終わり)
 
 NOTE: *Rationale.*
@@ -103,7 +103,7 @@ Most compilers use one unit for both, the INTEGER handles and the handles define
 NOTE: *根拠*
 Fortranの整数値は等価であるため、アプリケーションはサポートされている3つのFortranメソッド間でMPIハンドルを簡単に変換することができます。
 例えば、整数値のコミュニケータハンドルCOMMはcomm_f08%MPI_VAL=COMMによってcomm_f08 という名前の mpi_f08 コミュニケータハンドルに直接変換することができます。
-INTEGER定義ハンドルとBIND©派生型ハンドルの使用方法は異なります: Fortran 2003(およびそれ以降)では、BIND(C)派生型はユーザ定義の共通ブロック内で使用できると定義されていますが、これらのBIND(C)派生型ハンドルに何個の数値記憶ユニットを使用するかはコンパイラの規則次第です。
+INTEGER定義ハンドルとBIND(C)派生型ハンドルの使用方法は異なります: Fortran 2003(およびそれ以降)では、BIND(C)派生型はユーザ定義の共通ブロック内で使用できると定義されていますが、これらのBIND(C)派生型ハンドルに何個の数値記憶ユニットを使用するかはコンパイラの規則次第です。
 ほとんどのコンパイラは、INTEGERハンドルとBIND©派生型として定義されたハンドルの両方に1単位を使用します。
 (根拠終わり)
 
@@ -123,19 +123,19 @@ In a call to deallocate this is an INOUT argument which returns with an "invalid
 MPI provides an "invalid handle" constant for each object type.
 Comparisons to this constant are used to test for validity of the handle.
 
-不透明オブジェクトは、各オブジェクトタイプに固有の呼び出しによって割り当てと割り当て解除が行われる。
-これらの呼び出しは、オブジェクトが説明されているセクションにリストされている。
+不透明オブジェクトは、各オブジェクトタイプに固有の呼び出しによって割り当てと割り当て解除が行われます。
+これらの呼び出しは、オブジェクトが説明されているセクションにリストされています。
 呼び出しは、型が一致する handle 引数を受け取ります。
-allocate呼び出しでは、これはオブジェクトへの有効な参照を返すOUT引数である。
-deallocate呼び出しでは、これは "invalid handle "値で返すINOUT引数です。
-MPIは各オブジェクト型に対して "無効なハンドル "定数を提供します。
+allocate呼び出しでは、これはオブジェクトへの有効な参照を返すOUT引数です。
+deallocate呼び出しでは、これは "invalid handle"値で返すINOUT引数です。
+MPIは各オブジェクト型に対して "無効なハンドル"定数を提供します。
 この定数との比較がハンドルの有効性をテストするために使用されます。
 
 A call to a deallocate routine invalidates the handle and marks the object for deallocation.
 The object is not accessible to the user after the call. However, MPI need not deallocate the object immediately.
 Any operation pending (at the time of the deallocate) that involves this object will complete normally; the object will be deallocated afterwards.
 
-deallocateルーチンを呼び出すと、ハンドルは無効になり、そのオブジェクトは割り当て解除される。
+deallocateルーチンを呼び出すと、ハンドルは無効になり、そのオブジェクトは割り当てが解除されます。
 この呼び出しの後、ユーザはオブジェクトにアクセスできなくなります。しかし、MPIは直ちにオブジェクトを解放する必要はありません。
 deallocateされた時点で保留されている、このオブジェクトに関係する操作はすべて正常に完了し、オブジェクトはその後にdeallocateされます。
 
@@ -164,12 +164,12 @@ NOTE: *根拠*
 この設計は、MPIデータ構造に使用される内部表現を隠蔽するため、CやFortranでも同様の呼び出しが可能です。
 また、これらの言語の型付け規則との衝突を回避し、将来的な機能拡張を容易にします。
 ここで使用されている不透明オブジェクトのメカニズムは、POSIX Fortranバインディング標準に緩く従っています。 +
-ユーザー空間のハンドルとシステム空間のオブジェクトを明示的に分離することで、ユーザープログラムの適切な箇所で空間奪還と解放の呼び出しを行うことができる。
-不透明なオブジェクトがユーザー空間にあった場合、そのオブジェクトを必要とする保留中の操作が完了する前にスコープ外に出ないように、細心の注意を払わなければならない。
-指定された設計では、オブジェクトに割り当て解除のマークを付けることができ、ユーザー・プログラムはスコープ外に出ることができる。 +
+ユーザー空間のハンドルとシステム空間のオブジェクトを明示的に分離することで、ユーザープログラムの適切な箇所で空間奪還と解放の呼び出しを行うことができます。
+不透明なオブジェクトがユーザー空間にあった場合、そのオブジェクトを必要とする保留中の操作が完了する前にスコープ外に出ないように、細心の注意を払わなければなりません。
+指定された設計では、オブジェクトに割り当て解除のマークを付けることができ、ユーザー・プログラムはスコープ外に出ることができます。 +
 ハンドルの割り当て/比較をサポートするという要件は、そのような操作が一般的であるためです。
-これにより、実装可能な領域が制限される。
-C言語の代替案としては、ハンドルを任意の不透明な型にすることも可能であっただろう。
+これにより、実装可能な領域が制限されます。
+C言語の代替案としては、ハンドルを任意の不透明な型にすることも可能だったと思います。
 この場合、代入と比較を行うルーチンを導入しなければならなくなり、複雑さが増すため、除外されました。
 Fortranでは、ハンドルの代入と比較は、その言語の演算子か、これらの演算子のオーバーロード版で利用できるように定義されています。(根拠終わり)
 
@@ -191,7 +191,7 @@ In such cases, the implementation must maintain reference counts, and allocate a
 
 NOTE: *実装者へのアドバイス*
 不透明オブジェクトの意図されたセマンティクスは、不透明オブジェクトは互いに分離しているということです。そのようなオブジェクトを割り当てるための各呼び出しは、そのオブジェクトに必要なすべての情報をコピーします。
-実装では、コピーの代わりに参照を使用することで、過剰なコピーを避けることができる。
+実装では、コピーの代わりに参照を使用することで、過剰なコピーを避けることができます。
 MPI_COMM_GROUP を呼び出すと、そのグループのコピーではなく、コミュニケータに関連付けられたグループへの参照が返されます。
 このような場合、実装は参照カウントを維持し、オブジェクトがコピーされたかのように見えるようにオブジェクトを割り当てたり、割り当て解除したりしなければなりません。(実装者へのアドバイスはここまで）。
 
@@ -225,7 +225,7 @@ The handles themselves are constants and can be also used in initialization expr
 
 すべての名前付き定数は、Fortranの例外を除いて、初期化式や代入で使用することができますが、配列宣言やCのswitch文やFortranのselect/case文のラベルとして使用することはできません。
 これは、名前付き定数がリンク時定数であることを意味しますが、コンパイル時定数であるとは限りません。
-以下に挙げる名前付き定数は、CでもFortranでもコンパイル時定数であることが要求される。
+以下に挙げる名前付き定数は、CでもFortranでもコンパイル時定数であることが要求されます。
 これらの定数は実行中に値が変わることはありません。
 定数ハンドルによってアクセスされる不透明オブジェクトは、MPI の初期化 (MPI_INIT) から MPI の完了 (MPI_FINALIZE) までの間、値が変化しないように定義されています。
 ハンドル自体は定数であり、初期化式や代入で使用することもできます。
@@ -258,7 +258,7 @@ MPI_ASYNC_PROTECTS_NONBLOCKING (Fortran only)
 
 The constants that cannot be used in initialization expressions or assignments in Fortran are as follows:
 
-Fortranの初期化式や代入で使用できない定数は以下の通りである:
+Fortranの初期化式や代入で使用できない定数は以下の通りです:
 
 [source]
 ----
@@ -338,8 +338,8 @@ In addition, a resource error may occur when a program exceeds the amount of ava
 The occurrence of this type of error depends on the amount of available resources in the system and the resource allocation mechanism used; this may differ from system to system.
 A high-quality implementation will provide generous limits on the important resources so as to alleviate the portability problem this represents.
 
-この種のエラーの発生は、システムで利用可能なリソースの量と、使用されるリソース割り当てメカニズムに依存する。
-高品質な実装では、重要なリソースに寛大な制限を設け、これが示す移植性の問題を緩和する。
+この種のエラーの発生は、システムで利用可能なリソースの量と、使用されるリソース割り当てメカニズムに依存します。
+高品質な実装では、重要なリソースに寛大な制限を設け、これが示す移植性の問題を緩和します。
 
 In C and Fortran, almost all MPI calls return a code that indicates successful completion of the operation.
 Whenever possible, MPI calls return an error code if an error occurred during the call.
@@ -387,9 +387,9 @@ This document does not specify the state of a computation after an erroneous MPI
 The desired behavior is that a relevant error code be returned, and the effect of the error be localized to the greatest possible extent.
 E.g., it is highly desirable that an erroneous receive call will not cause any part of the receiver's memory to be overwritten, beyond the area specified for receiving the message.
 
-この文書では、誤ったMPIコールが発生した後の計算の状態については規定しない。
+この文書では、誤ったMPIコールが発生した後の計算の状態については規定しません。
 望ましい動作は、関連するエラーコードが返され、エラーの影響が可能な限り局所化されることです。
-例えば、誤った受信呼び出しが発生しても、メッセージを受信するために指定された領域を超えて、受信側のメモリの一部が上書きされないことが非常に望ましい。
+例えば、誤った受信呼び出しが発生しても、メッセージを受信するために指定された領域を超えて、受信側のメモリの一部が上書きされないことが非常に望ましいです。
 
 Implementations may go beyond this document in supporting in a meaningful manner MPI calls that are defined here to be erroneous.
 For example, MPI specifies strict type matching rules between matching send and receive operations: it is erroneous to send a floating point variable and receive an integer.
@@ -399,7 +399,7 @@ It will be helpful to generate warnings for such nonconforming behavior.
 実装は、ここで誤りと定義されているMPIコールを意味のある形でサポートするために、このドキュメントを越えてもよい。
 例えば、MPIは送信操作と受信操作のマッチングに厳格な型マッチングルールを規定しています: 浮動小数点変数を送信して整数を受信することは誤りです。
 実装は、これらの型照合ルールを超えて、そのような状況で自動的な型変換を提供するかもしれません。
-そのような不適合な動作に対する警告を生成することは有益であろう。
+そのような不適合な動作に対する警告を生成することは有益だと思います。
 
 MPI defines a way for users to create new error codes as defined in Section 9.5.
 
