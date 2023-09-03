@@ -1,8 +1,10 @@
 = MPI: A Message-Passing Interface Standard Version 4.0
+
 :doctype: book
-:toc: left
 :sectnums:
 :sectnumlevels: 3
+:toc: left
+:toclevels: 4
 
 == List of Figures
 
