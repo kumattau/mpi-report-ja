@@ -12,53 +12,53 @@
 
 == Acknowledgements
 
-== Chapter 1 Introduction to MPI
+== Introduction to MPI
 
-=== 1.1 Overview and Goals
+=== Overview and Goals
 
-=== 1.2 Background of MPI-1.0
+=== Background of MPI-1.0
 
-=== 1.3 Background of MPI-1.1, MPI-1.2, and MPI-2.0
+=== Background of MPI-1.1, MPI-1.2, and MPI-2.0
 
-=== 1.4 Background of MPI-1.3 and MPI-2.1
+=== Background of MPI-1.3 and MPI-2.1
 
-=== 1.5 Background of MPI-2.2
+=== Background of MPI-2.2
 
-=== 1.6 Background of MPI-3.0
+=== Background of MPI-3.0
 
-=== 1.7 Background of MPI-3.1
+=== Background of MPI-3.1
 
-=== 1.8 Background of MPI-4.0
+=== Background of MPI-4.0
 
-=== 1.9 Who Should Use This Standard?
+=== Who Should Use This Standard?
 
-=== 1.10 What Platforms Are Targets for Implementation?
+=== What Platforms Are Targets for Implementation?
 
-=== 1.11 What Is Included in the Standard?
+=== What Is Included in the Standard?
 
-=== 1.12 What Is Not Included in the Standard?
+=== What Is Not Included in the Standard?
 
-=== 1.13 Organization of This Document
+=== Organization of This Document
 
-== Chapter 2 MPI Terms and Conventions
+== MPI Terms and Conventions
 
-=== 2.1 Document Notation
+=== Document Notation
 
-=== 2.2 Naming Conventions
+=== Naming Conventions
 
-=== 2.3 Procedure Specification
+=== Procedure Specification
 
-=== 2.4 Semantic Terms
+=== Semantic Terms
 
-==== 2.4.1 MPI Operations
+==== MPI Operations
 
-==== 2.4.2 MPI Procedures
+==== MPI Procedures
 
-==== 2.4.3 MPI Datatypes
+==== MPI Datatypes
 
-=== 2.5 Datatypes
+=== Datatypes
 
-==== 2.5.1 Opaque Objects
+==== Opaque Objects
 
 MPI manages system memory that is used for buffering messages and for storing internal representations of various MPI objects such as groups, communicators, datatypes, etc.
 This memory is not directly accessible to the user, and objects stored there are opaque: their size and shape is not visible to the user.
@@ -89,7 +89,7 @@ USE mpi_f08 を使用する Fortran では、ハンドルは1つの要素 INTEGE
 [source,fortran]
 ----
 TYPE, BIND(C) :: MPI_Comm
-  INTEGER :: MPI_VAL
+ INTEGER :: MPI_VAL
 END TYPE MPI_Comm
 ----
 
@@ -208,11 +208,11 @@ MPI_COMM_GROUP を呼び出すと、そのグループのコピーではなく�
 このような場合、実装は参照カウントを維持し、オブジェクトがコピーされたかのように見えるようにオブジェクトを割り当てたり、割り当て解除したりしなければなりません。(実装者へのアドバイスはここまで）。
 
 
-==== 2.5.2 Array Arguments
+==== Array Arguments
 
-==== 2.5.3 State
+==== State
 
-==== 2.5.4 Named Constants
+==== Named Constants
 
 MPI procedures sometimes assign a special meaning to a special value of a basic type argument; e.g., tag is an integer-valued argument of point-to-point communication operations, with a special wild-card value, MPI_ANY_TAG.
 Such arguments will have a range of regular values, which is a proper subrange of the range of values of the corresponding basic type; special values (such as MPI_ANY_TAG) will be outside the regular range.
@@ -300,27 +300,27 @@ Fortranでは、これらの特殊な定数の実装は、Fortran標準外の言
 (実装者へのアドバイスの終わり)
 
 
-==== 2.5.5 Choice
+==== Choice
 
-==== 2.5.6 Absolute Addresses and Relative Address Displacements
+==== Absolute Addresses and Relative Address Displacements
 
-==== 2.5.7 File Offsets
+==== File Offsets
 
-==== 2.5.8 Counts
+==== Counts
 
-=== 2.6 Language Binding
+=== Language Binding
 
-==== 2.6.1 Deprecated and Removed Interfaces
+==== Deprecated and Removed Interfaces
 
-==== 2.6.2 Fortran Binding Issues
+==== Fortran Binding Issues
 
-==== 2.6.3 C Binding Issues
+==== C Binding Issues
 
-==== 2.6.4 Functions and Macros
+==== Functions and Macros
 
-=== 2.7 Processes
+=== Processes
 
-=== 2.8 Error Handling
+=== Error Handling
 
 MPI provides the user with reliable message transmission. A message sent is always received correctly, and the user does not need to check for transmission errors, time-outs, or other error conditions.
 In other words, MPI does not provide mechanisms for dealing with transmission failures in the communication system.
@@ -418,1080 +418,1079 @@ MPI defines a way for users to create new error codes as defined in Section 9.5.
 MPIは、セクション9.5で定義されているように、ユーザが新しいエラーコードを作成する方法を定義しています。
 
 
-=== 2.9 Implementation Issues
+=== Implementation Issues
 
-==== 2.9.1 Independence of Basic Runtime Routines
+==== Independence of Basic Runtime Routines
 
-==== 2.9.2 Interaction with Signals
+==== Interaction with Signals
 
-=== 2.10 Examples
+=== Examples
 
-== Chapter 3 Point-to-Point Communication
+== Point-to-Point Communication
 
-=== 3.1 Introduction
+=== Introduction
 
-=== 3.2 Blocking Send and Receive Operations
+=== Blocking Send and Receive Operations
 
-==== 3.2.1 Blocking Send
+==== Blocking Send
 
-==== 3.2.2 Message Data
+==== Message Data
 
-==== 3.2.3 Message Envelope
+==== Message Envelope
 
-==== 3.2.4 Blocking Receive
+==== Blocking Receive
 
-==== 3.2.5 Return Status
+==== Return Status
 
-==== 3.2.6 Passing MPI_STATUS_IGNORE for Status
+==== Passing MPI_STATUS_IGNORE for Status
 
-==== 3.2.7 Blocking Send-Receive
+==== Blocking Send-Receive
 
-=== 3.3 Datatype Matching and Data Conversion
+=== Datatype Matching and Data Conversion
 
-==== 3.3.1 Type Matching Rules
+==== Type Matching Rules
 
-===== 3.3.1.1 Type MPI_CHARACTER
+===== Type MPI_CHARACTER
 
-==== 3.3.2 Data Conversion
+==== Data Conversion
 
-=== 3.4 Communication Modes
+=== Communication Modes
 
-=== 3.5 Semantics of Point-to-Point Communication
+=== Semantics of Point-to-Point Communication
 
-=== 3.6 Buffer Allocation and Usage
+=== Buffer Allocation and Usage
 
-==== 3.6.1 Model Implementation of Buffered Mode
+==== Model Implementation of Buffered Mode
 
-=== 3.7 Nonblocking Communication
+=== Nonblocking Communication
 
-==== 3.7.1 Communication Request Objects
+==== Communication Request Objects
 
-==== 3.7.2 Communication Initiation
+==== Communication Initiation
 
-==== 3.7.3 Communication Completion
+==== Communication Completion
 
-==== 3.7.4 Semantics of Nonblocking Communications
+==== Semantics of Nonblocking Communications
 
-==== 3.7.5 Multiple Completions
+==== Multiple Completions
 
-==== 3.7.6 Non-Destructive Test of status
+==== Non-Destructive Test of status
 
-==== 3.8 Probe and Cancel
+==== Probe and Cancel
 
-==== 3.8.1 Probe
+==== Probe
 
-==== 3.8.2 Matching Probe
+==== Matching Probe
 
-==== 3.8.3 Matched Receives
+==== Matched Receives
 
-==== 3.8.4 Cancel
+==== Cancel
 
-=== 3.9 Persistent Communication Requests
+=== Persistent Communication Requests
 
-=== 3.10 Null Processes
+=== Null Processes
 
-== Chapter 4 Partitioned Point-to-Point Communication
+== Partitioned Point-to-Point Communication
 
-=== 4.1 Introduction
+=== Introduction
 
-=== 4.2 Semantics of Partitioned Point-to-Point Communication
+=== Semantics of Partitioned Point-to-Point Communication
 
-==== 4.2.1 Communication Initialization and Starting with Partitioning
+==== Communication Initialization and Starting with Partitioning
 
-==== 4.2.2 Communication Completion under Partitioning
+==== Communication Completion under Partitioning
 
-==== 4.2.3 Semantics of Communications in Partitioned Mode
+==== Semantics of Communications in Partitioned Mode
 
-=== 4.3 Partitioned Communication Examples
+=== Partitioned Communication Examples
 
-==== 4.3.1 Partition Communication with Threads/Tasks Using OpenMP 4.0 or later
+==== Partition Communication with Threads/Tasks Using OpenMP 4.0 or later
 
-==== 4.3.2 Send-only Partitioning Example with Tasks and OpenMP version 4.0 or later
+==== Send-only Partitioning Example with Tasks and OpenMP version 4.0 or later
 
-==== 4.3.3 Send and Receive Partitioning Example with OpenMP version 4.0 or later
+==== Send and Receive Partitioning Example with OpenMP version 4.0 or later
 
-== Chapter 5 Datatypes
+== Datatypes
 
-=== 5.1 Derived Datatypes
+=== Derived Datatypes
 
-==== 5.1.1 Type Constructors with Explicit Addresses
+==== Type Constructors with Explicit Addresses
 
-==== 5.1.2 Datatype Constructors
+==== Datatype Constructors
 
-==== 5.1.3 Subarray Datatype Constructor
+==== Subarray Datatype Constructor
 
-==== 5.1.4 Distributed Array Datatype Constructor
+==== Distributed Array Datatype Constructor
 
-==== 5.1.5 Address and Size Functions
+==== Address and Size Functions
 
-==== 5.1.6 Lower-Bound and Upper-Bound Markers
+==== Lower-Bound and Upper-Bound Markers
 
-==== 5.1.7 Extent and Bounds of Datatypes
+==== Extent and Bounds of Datatypes
 
-==== 5.1.8 True Extent of Datatypes
+==== True Extent of Datatypes
 
-==== 5.1.9 Commit and Free
+==== Commit and Free
 
-==== 5.1.10 Duplicating a Datatype
+==== Duplicating a Datatype
 
-==== 5.1.11 Use of General Datatypes in Communication
+==== Use of General Datatypes in Communication
 
-==== 5.1.12 Correct Use of Addresses
+==== Correct Use of Addresses
 
-==== 5.1.13 Decoding a Datatype
+==== Decoding a Datatype
 
-==== 5.1.14 Examples
+==== Examples
 
-=== 5.2 Pack and Unpack
+=== Pack and Unpack
 
-=== 5.3 Canonical MPI_PACK and MPI_UNPACK
+=== Canonical MPI_PACK and MPI_UNPACK
 
-== Chapter 6 Collective Communication
+== Collective Communication
 
-=== 6.1 Introduction and Overview
+=== Introduction and Overview
 
-=== 6.2 Communicator Argument
+=== Communicator Argument
 
-==== 6.2.1 Specifics for Intra-Communicator Collective Operations
+==== Specifics for Intra-Communicator Collective Operations
 
-==== 6.2.2 Applying Collective Operations to Inter-Communicators
+==== Applying Collective Operations to Inter-Communicators
 
-==== 6.2.3 Specifics for Inter-Communicator Collective Operations
+==== Specifics for Inter-Communicator Collective Operations
 
-=== 6.3 Barrier Synchronization
+=== Barrier Synchronization
 
-=== 6.4 Broadcast
+=== Broadcast
 
-==== 6.4.1 Example using MPI_BCAST
+==== Example using MPI_BCAST
 
-=== 6.5 Gather
+=== Gather
 
-==== 6.5.1 Examples using MPI_GATHER, MPI_GATHERV
+==== Examples using MPI_GATHER, MPI_GATHERV
 
-=== 6.6 Scatter
+=== Scatter
 
-==== 6.6.1 Examples using MPI_SCATTER, MPI_SCATTERV
+==== Examples using MPI_SCATTER, MPI_SCATTERV
 
-=== 6.7 Gather-to-all
+=== Gather-to-all
 
-==== 6.7.1 Example using MPI_ALLGATHER
+==== Example using MPI_ALLGATHER
 
-=== 6.8 All-to-All Scatter/Gather
+=== All-to-All Scatter/Gather
 
-=== 6.9 Global Reduction Operations
+=== Global Reduction Operations
 
-==== 6.9.1 Reduce
+==== Reduce
 
-==== 6.9.2 Predefined Reduction Operations
+==== Predefined Reduction Operations
 
-==== 6.9.3 Signed Characters and Reductions
+==== Signed Characters and Reductions
 
-==== 6.9.4 MINLOC and MAXLOC
+==== MINLOC and MAXLOC
 
-==== 6.9.5 User-Defined Reduction Operations
+==== User-Defined Reduction Operations
 
-===== 6.9.5.1 Example of User-Defined Reduce
+===== Example of User-Defined Reduce
 
-==== 6.9.6 All-Reduce
+==== All-Reduce
 
-==== 6.9.7 Process-Local Reduction
+==== Process-Local Reduction
 
-=== 6.10 Reduce-Scatter
+=== Reduce-Scatter
 
-==== 6.10.1 MPI_REDUCE_SCATTER_BLOCK
+==== MPI_REDUCE_SCATTER_BLOCK
 
-==== 6.10.2 MPI_REDUCE_SCATTER
+==== MPI_REDUCE_SCATTER
 
-=== 6.11 Scan
+=== Scan
 
-==== 6.11.1 Inclusive Scan
+==== Inclusive Scan
 
-==== 6.11.2 Exclusive Scan
+==== Exclusive Scan
 
-==== 6.11.3 Example using MPI_SCAN
+==== Example using MPI_SCAN
 
-=== 6.12 Nonblocking Collective Operations
+=== Nonblocking Collective Operations
 
-==== 6.12.1 Nonblocking Barrier Synchronization
+==== Nonblocking Barrier Synchronization
 
-==== 6.12.2 Nonblocking Broadcast
+==== Nonblocking Broadcast
 
-===== 6.12.2.1 Example using MPI_IBCAST
+===== Example using MPI_IBCAST
 
-==== 6.12.3 Nonblocking Gather
+==== Nonblocking Gather
 
-==== 6.12.4 Nonblocking Scatter
+==== Nonblocking Scatter
 
-==== 6.12.5 Nonblocking Gather-to-all
+==== Nonblocking Gather-to-all
 
-==== 6.12.6 Nonblocking All-to-All Scatter/Gather
+==== Nonblocking All-to-All Scatter/Gather
 
-==== 6.12.7 Nonblocking Reduce
+==== Nonblocking Reduce
 
-==== 6.12.8 Nonblocking All-Reduce
+==== Nonblocking All-Reduce
 
-==== 6.12.9 Nonblocking Reduce-Scatter with Equal Blocks
+==== Nonblocking Reduce-Scatter with Equal Blocks
 
-==== 6.12.10 Nonblocking Reduce-Scatter
+==== Nonblocking Reduce-Scatter
 
-==== 6.12.11 Nonblocking Inclusive Scan
+==== Nonblocking Inclusive Scan
 
-==== 6.12.12 Nonblocking Exclusive Scan
+==== Nonblocking Exclusive Scan
 
-=== 6.13 Persistent Collective Operations
+=== Persistent Collective Operations
 
-==== 6.13.1 Persistent Barrier Synchronization
+==== Persistent Barrier Synchronization
 
-==== 6.13.2 Persistent Broadcast
+==== Persistent Broadcast
 
-==== 6.13.3 Persistent Gather
+==== Persistent Gather
 
-==== 6.13.4 Persistent Scatter
+==== Persistent Scatter
 
-==== 6.13.5 Persistent Gather-to-all
+==== Persistent Gather-to-all
 
-==== 6.13.6 Persistent All-to-All Scatter/Gather
+==== Persistent All-to-All Scatter/Gather
 
-==== 6.13.7 Persistent Reduce
+==== Persistent Reduce
 
-==== 6.13.8 Persistent All-Reduce
+==== Persistent All-Reduce
 
-==== 6.13.9 Persistent Reduce-Scatter with Equal Blocks
+==== Persistent Reduce-Scatter with Equal Blocks
 
-==== 6.13.10 Persistent Reduce-Scatter
+==== Persistent Reduce-Scatter
 
-==== 6.13.11 Persistent Inclusive Scan
+==== Persistent Inclusive Scan
 
-==== 6.13.12 Persistent Exclusive Scan
+==== Persistent Exclusive Scan
 
-=== 6.14 Correctness
+=== Correctness
 
-== Chapter 7 Groups, Contexts, Communicators, and Caching
+== Groups, Contexts, Communicators, and Caching
 
-=== 7.1 Introduction
+=== Introduction
 
-==== 7.1.1 Features Needed to Support Libraries
+==== Features Needed to Support Libraries
 
-==== 7.1.2 MPI’s Support for Libraries
+==== MPI’s Support for Libraries
 
-=== 7.2 Basic Concepts
+=== Basic Concepts
 
-==== 7.2.1 Groups
+==== Groups
 
-==== 7.2.2 Contexts
+==== Contexts
 
-==== 7.2.3 Intra-Communicators
+==== Intra-Communicators
 
-==== 7.2.4 Predefined Intra-Communicators
+==== Predefined Intra-Communicators
 
-=== 7.3 Group Management
+=== Group Management
 
-==== 7.3.1 Group Accessors
+==== Group Accessors
 
-==== 7.3.2 Group Constructors
+==== Group Constructors
 
-==== 7.3.3 Group Destructors
+==== Group Destructors
 
-=== 7.4 Communicator Management
+=== Communicator Management
 
-==== 7.4.1 Communicator Accessors
+==== Communicator Accessors
 
-==== 7.4.2 Communicator Constructors
+==== Communicator Constructors
 
-==== 7.4.3 Communicator Destructors
+==== Communicator Destructors
 
-==== 7.4.4 Communicator Info
+==== Communicator Info
 
-=== 7.5 Motivating Examples
+=== Motivating Examples
 
-==== 7.5.1 Current Practice #1
+==== Current Practice #1
 
-==== 7.5.2 Current Practice #2
+==== Current Practice #2
 
-==== 7.5.3 (Approximate) Current Practice #3
+==== (Approximate) Current Practice #3
 
-==== 7.5.4 Communication Safety Example
+==== Communication Safety Example
 
-==== 7.5.5 Library Example #1
+==== Library Example #1
 
-==== 7.5.6 Library Example #2
+==== Library Example #2
 
-=== 7.6 Inter-Communication
+=== Inter-Communication
 
-==== 7.6.1 Inter-Communicator Accessors
+==== Inter-Communicator Accessors
 
-==== 7.6.2 Inter-Communicator Operations
+==== Inter-Communicator Operations
 
-==== 7.6.3 Inter-Communication Examples
+==== Inter-Communication Examples
 
-===== 7.6.3.1 Example 1: Three-Group "Pipeline"
+===== Example 1: Three-Group "Pipeline"
 
-===== 7.6.3.2 Example 2: Three-Group "Ring"
+===== Example 2: Three-Group "Ring"
 
-=== 7.7 Caching
+=== Caching
 
-==== 7.7.1 Functionality
+==== Functionality
 
-==== 7.7.2 Communicators
+==== Communicators
 
-==== 7.7.3 Windows
+==== Windows
 
-==== 7.7.4 Datatypes
+==== Datatypes
 
-==== 7.7.5 Error Class for Invalid Keyval
+==== Error Class for Invalid Keyval
 
-==== 7.7.6 Attributes Example
+==== Attributes Example
 
-=== 7.8 Naming Objects
+=== Naming Objects
 
-=== 7.9 Formalizing the Loosely Synchronous Model
+=== Formalizing the Loosely Synchronous Model
 
-==== 7.9.1 Basic Statements
+==== Basic Statements
 
-==== 7.9.2 Models of Execution
+==== Models of Execution
 
-===== 7.9.2.1 Static Communicator Allocation
+===== Static Communicator Allocation
 
-===== 7.9.2.2 Dynamic Communicator Allocation
+===== Dynamic Communicator Allocation
 
-===== 7.9.2.3 The General Case
+===== The General Case
 
-== Chapter 8 Process Topologies
+== Process Topologies
 
-=== 8.1 Introduction
+=== Introduction
 
-=== 8.2 Virtual Topologies
+=== Virtual Topologies
 
-=== 8.3 Embedding in MPI
+=== Embedding in MPI
 
-=== 8.4 Overview of the Functions
+=== Overview of the Functions
 
-=== 8.5 Topology Constructors
+=== Topology Constructors
 
-==== 8.5.1 Cartesian Constructor
+==== Cartesian Constructor
 
-==== 8.5.2 Cartesian Convenience Function: MPI_DIMS_CREATE
+==== Cartesian Convenience Function: MPI_DIMS_CREATE
 
-==== 8.5.3 Graph Constructor
+==== Graph Constructor
 
-==== 8.5.4 Distributed Graph Constructor
+==== Distributed Graph Constructor
 
-==== 8.5.5 Topology Inquiry Functions
+==== Topology Inquiry Functions
 
-==== 8.5.6 Cartesian Shift Coordinates
+==== Cartesian Shift Coordinates
 
-==== 8.5.7 Partitioning of Cartesian Structures
+==== Partitioning of Cartesian Structures
 
-==== 8.5.8 Low-Level Topology Functions
+==== Low-Level Topology Functions
 
-=== 8.6 Neighborhood Collective Communication
+=== Neighborhood Collective Communication
 
-==== 8.6.1 Neighborhood Gather
+==== Neighborhood Gather
 
-==== 8.6.2 Neighbor Alltoall
+==== Neighbor Alltoall
 
-=== 8.7 Nonblocking Neighborhood Communication
+=== Nonblocking Neighborhood Communication
 
-==== 8.7.1 Nonblocking Neighborhood Gather
+==== Nonblocking Neighborhood Gather
 
-==== 8.7.2 Nonblocking Neighborhood Alltoall
+==== Nonblocking Neighborhood Alltoall
 
-=== 8.8 Persistent Neighborhood Communication
+=== Persistent Neighborhood Communication
 
-==== 8.8.1 Persistent Neighborhood Gather
+==== Persistent Neighborhood Gather
 
-==== 8.8.2 Persistent Neighborhood Alltoall
+==== Persistent Neighborhood Alltoall
 
-=== 8.9 An Application Example
+=== An Application Example
 
-== Chapter 9 MPI Environmental Management
+== MPI Environmental Management
 
-=== 9.1 Implementation Information
+=== Implementation Information
 
-==== 9.1.1 Version Inquiries
+==== Version Inquiries
 
-==== 9.1.2 Environmental Inquiries
+==== Environmental Inquiries
 
-===== 9.1.2.1 Tag Values
+===== Tag Values
 
-===== 9.1.2.2 Host Rank
+===== Host Rank
 
-===== 9.1.2.3 IO Rank
+===== IO Rank
 
-===== 9.1.2.4 Clock Synchronization
+===== Clock Synchronization
 
-===== 9.1.2.5 Inquire Processor Name
+===== Inquire Processor Name
 
-=== 9.2 Memory Allocation
+=== Memory Allocation
 
-=== 9.3 Error Handling
+=== Error Handling
 
-==== 9.3.1 Error Handlers for Communicators
+==== Error Handlers for Communicators
 
-==== 9.3.2 Error Handlers for Windows
+==== Error Handlers for Windows
 
-==== 9.3.3 Error Handlers for Files
+==== Error Handlers for Files
 
-==== 9.3.4 Error Handlers for Sessions
+==== Error Handlers for Sessions
 
-==== 9.3.5 Freeing Errorhandlers and Retrieving Error Strings
+==== Freeing Errorhandlers and Retrieving Error Strings
 
-=== 9.4 Error Codes and Classes
+=== Error Codes and Classes
 
-=== 9.5 Error Classes, Error Codes, and Error Handlers
+=== Error Classes, Error Codes, and Error Handlers
 
-=== 9.6 Timers and Synchronization
+=== Timers and Synchronization
 
-== Chapter 10 The Info Object
+== The Info Object
 
-== Chapter 11 Process Initialization, Creation, and Management
+== Process Initialization, Creation, and Management
 
-=== 11.1 Introduction
+=== Introduction
 
-=== 11.2 The World Model
+=== The World Model
 
-==== 11.2.1 Starting MPI Processes
+==== Starting MPI Processes
 
-==== 11.2.2 Finalizing MPI
+==== Finalizing MPI
 
-==== 11.2.3 Determining Whether MPI Has Been Initialized When Using the World Model
+==== Determining Whether MPI Has Been Initialized When Using the World Model
 
-==== 11.2.4 Allowing User Functions at MPI Finalization
+==== Allowing User Functions at MPI Finalization
 
-=== 11.3 The Sessions Model
+=== The Sessions Model
 
-==== 11.3.1 Session Creation and Destruction Methods
+==== Session Creation and Destruction Methods
 
-==== 11.3.2 Processes Sets
+==== Processes Sets
 
-==== 11.3.3 Runtime Query Functions
+==== Runtime Query Functions
 
-==== 11.3.4 Sessions Model Examples
+==== Sessions Model Examples
 
-=== 11.4 Common Elements of Both Process Models
+=== Common Elements of Both Process Models
 
-==== 11.4.1 MPI Functionality that is Always Available
+==== MPI Functionality that is Always Available
 
-==== 11.4.2 Aborting MPI Processes
+==== Aborting MPI Processes
 
-=== 11.5 Portable MPI Process Startup
+=== Portable MPI Process Startup
 
-=== 11.6 MPI and Threads
+=== MPI and Threads
 
-==== 11.6.1 General
+==== General
 
-==== 11.6.2 Clarifications
+==== Clarifications
 
-=== 11.7 The Dynamic Process Model
+=== The Dynamic Process Model
 
-==== 11.7.1 Starting Processes
+==== Starting Processes
 
-==== 11.7.2 The Runtime Environment
+==== The Runtime Environment
 
-=== 11.8 Process Manager Interface
+=== Process Manager Interface
 
-==== 11.8.1 Processes in MPI
+==== Processes in MPI
 
-==== 11.8.2 Starting Processes and Establishing Communication
+==== Starting Processes and Establishing Communication
 
-==== 11.8.3 Starting Multiple Executables and Establishing Communication .
+==== Starting Multiple Executables and Establishing Communication .
 
-==== 11.8.4 Reserved Keys
+==== Reserved Keys
 
-==== 11.8.5 Spawn Example
+==== Spawn Example
 
-=== 11.9 Establishing Communication
+=== Establishing Communication
 
-==== 11.9.1 Names, Addresses, Ports, and All That
+==== Names, Addresses, Ports, and All That
 
-==== 11.9.2 Server Routines
+==== Server Routines
 
-==== 11.9.3 Client Routines
+==== Client Routines
 
-==== 11.9.4 Name Publishing
+==== Name Publishing
 
-==== 11.9.5 Reserved Key Values
+==== Reserved Key Values
 
-==== 11.9.6 Client/Server Examples
+==== Client/Server Examples
 
-=== 11.10 Other Functionality
+=== Other Functionality
 
-==== 11.10.1 Universe Size
+==== Universe Size
 
-==== 11.10.2 Singleton MPI Initialization
+==== Singleton MPI Initialization
 
-==== 11.10.3 MPI_APPNUM
+==== MPI_APPNUM
 
-==== 11.10.4 Releasing Connections
+==== Releasing Connections
 
-==== 11.10.5 Another Way to Establish MPI Communication
+==== Another Way to Establish MPI Communication
 
-== Chapter 12 One-Sided Communications
+== One-Sided Communications
 
-=== 12.1 Introduction
+=== Introduction
 
-=== 12.2 Initialization
+=== Initialization
 
-==== 12.2.1 Window Creation
+==== Window Creation
 
-==== 12.2.2 Window That Allocates Memory
+==== Window That Allocates Memory
 
-==== 12.2.3 Window That Allocates Shared Memory
+==== Window That Allocates Shared Memory
 
-==== 12.2.4 Window of Dynamically Attached Memory
+==== Window of Dynamically Attached Memory
 
-==== 12.2.5 Window Destruction
+==== Window Destruction
 
-==== 12.2.6 Window Attributes
+==== Window Attributes
 
-==== 12.2.7 Window Info
+==== Window Info
 
-=== 12.3 Communication Calls
+=== Communication Calls
 
-==== 12.3.1 Put
+==== Put
 
-==== 12.3.2 Get
+==== Get
 
-==== 12.3.3 Examples for Communication Calls
+==== Examples for Communication Calls
 
-==== 12.3.4 Accumulate Functions
+==== Accumulate Functions
 
-===== 12.3.4.1 Accumulate Function
+===== Accumulate Function
 
-===== 12.3.4.2 Get Accumulate Function
+===== Get Accumulate Function
 
-===== 12.3.4.3 Fetch and Op Function
+===== Fetch and Op Function
 
-===== 12.3.4.4 Compare and Swap Function
+===== Compare and Swap Function
 
-==== 12.3.5 Request-based RMA Communication Operations
+==== Request-based RMA Communication Operations
 
-=== 12.4 Memory Model
+=== Memory Model
 
-=== 12.5 Synchronization Calls
+=== Synchronization Calls
 
-==== 12.5.1 Fence
+==== Fence
 
-==== 12.5.2 General Active Target Synchronization
+==== General Active Target Synchronization
 
-==== 12.5.3 Lock
+==== Lock
 
-==== 12.5.4 Flush and Sync
+==== Flush and Sync
 
-==== 12.5.5 Assertions
+==== Assertions
 
-==== 12.5.6 Miscellaneous Clarifications
+==== Miscellaneous Clarifications
 
-=== 12.6 Error Handling
+=== Error Handling
 
-==== 12.6.1 Error Handlers
+==== Error Handlers
 
-==== 12.6.2 Error Classes
+==== Error Classes
 
-=== 12.7 Semantics and Correctness
+=== Semantics and Correctness
 
-==== 12.7.1 Atomicity
+==== Atomicity
 
-==== 12.7.2 Ordering
+==== Ordering
 
-==== 12.7.3 Progress
+==== Progress
 
-==== 12.7.4 Registers and Compiler Optimizations
+==== Registers and Compiler Optimizations
 
-=== 12.8 Examples
+=== Examples
 
-== Chapter 13 External Interfaces
+== External Interfaces
 
-=== 13.1 Introduction
+=== Introduction
 
-=== 13.2 Generalized Requests
+=== Generalized Requests
 
-==== 13.2.1 Examples
+==== Examples
 
-=== 13.3 Associating Information with Status
+=== Associating Information with Status
 
-== Chapter 14 I/O
+== I/O
 
-=== 14.1 Introduction
+=== Introduction
 
-==== 14.1.1 Definitions
+==== Definitions
 
-=== 14.2 File Manipulation
+=== File Manipulation
 
-==== 14.2.1 Opening a File
+==== Opening a File
 
-==== 14.2.2 Closing a File
+==== Closing a File
 
-==== 14.2.3 Deleting a File
+==== Deleting a File
 
-==== 14.2.4 Resizing a File
+==== Resizing a File
 
-==== 14.2.5 Preallocating Space for a File
+==== Preallocating Space for a File
 
-==== 14.2.6 Querying the Size of a File
+==== Querying the Size of a File
 
-==== 14.2.7 Querying File Parameters
+==== Querying File Parameters
 
-==== 14.2.8 File Info
+==== File Info
 
-===== 14.2.8.1 Reserved File Hints
+===== Reserved File Hints
 
-=== 14.3 File Views
+=== File Views
 
-=== 14.4 Data Access
+=== Data Access
 
-==== 14.4.1 Data Access Routines
+==== Data Access Routines
 
-===== 14.4.1.1 Positioning
+===== Positioning
 
-===== 14.4.1.2 Synchronism
+===== Synchronism
 
-===== 14.4.1.3 Coordination
+===== Coordination
 
-===== 14.4.1.4 Data Access Conventions
+===== Data Access Conventions
 
-==== 14.4.2 Data Access with Explicit Offsets
+==== Data Access with Explicit Offsets
 
-==== 14.4.3 Data Access with Individual File Pointers
+==== Data Access with Individual File Pointers
 
-==== 14.4.4 Data Access with Shared File Pointers
+==== Data Access with Shared File Pointers
 
-===== 14.4.4.1 Noncollective Operations
+===== Noncollective Operations
 
-===== 14.4.4.2 Collective Operations
+===== Collective Operations
 
-===== 14.4.4.3 Seek
+===== Seek
 
-==== 14.4.5 Split Collective Data Access Routines
+==== Split Collective Data Access Routines
 
-=== 14.5 File Interoperability
+=== File Interoperability
 
-==== 14.5.1 Datatypes for File Interoperability
+==== Datatypes for File Interoperability
 
-==== 14.5.2 External Data Representation: "external32"
+==== External Data Representation: "external32"
 
-==== 14.5.3 User-Defined Data Representations
+==== User-Defined Data Representations
 
-===== 14.5.3.1 Extent Callback
+===== Extent Callback
 
-===== 14.5.3.2 Datarep Conversion Functions
+===== Datarep Conversion Functions
 
-==== 14.5.4 Matching Data Representations
+==== Matching Data Representations
 
-=== 14.6 Consistency and Semantics
+=== Consistency and Semantics
 
-==== 14.6.1 File Consistency
+==== File Consistency
 
-==== 14.6.2 Random Access vs. Sequential Files
+==== Random Access vs. Sequential Files
 
-==== 14.6.3 Progress
+==== Progress
 
-==== 14.6.4 Collective File Operations
+==== Collective File Operations
 
-==== 14.6.5 Nonblocking Collective File Operations
+==== Nonblocking Collective File Operations
 
-==== 14.6.6 Type Matching
+==== Type Matching
 
-==== 14.6.7 Miscellaneous Clarifications
+==== Miscellaneous Clarifications
 
-==== 14.6.8 MPI_Offset Type
+==== MPI_Offset Type
 
-==== 14.6.9 Logical vs. Physical File Layout
+==== Logical vs. Physical File Layout
 
-==== 14.6.10 File Size
+==== File Size
 
-==== 14.6.11 Examples
+==== Examples
 
-===== 14.6.11.1 Asynchronous I/O
+===== Asynchronous I/O
 
-=== 14.7 I/O Error Handling
+=== I/O Error Handling
 
-=== 14.8 I/O Error Classes
+=== I/O Error Classes
 
-=== 14.9 Examples
+=== Examples
 
-==== 14.9.1 Double Buffering with Split Collective I/O
+==== Double Buffering with Split Collective I/O
 
-==== 14.9.2 Subarray Filetype Constructor
+==== Subarray Filetype Constructor
 
-== Chapter 15 Tool Support
+== Tool Support
 
-=== 15.1 Introduction
+=== Introduction
 
-=== 15.2 Profiling Interface
+=== Profiling Interface
 
-==== 15.2.1 Requirements
+==== Requirements
 
-==== 15.2.2 Discussion
+==== Discussion
 
-==== 15.2.3 Logic of the Design
+==== Logic of the Design
 
-==== 15.2.4 Miscellaneous Control of Profiling
+==== Miscellaneous Control of Profiling
 
-==== 15.2.5 MPI Library Implementation
+==== MPI Library Implementation
 
-==== 15.2.6 Complications
+==== Complications
 
-==== 15.2.7 Multiple Levels of Interception
+==== Multiple Levels of Interception
 
-=== 15.3 The MPI Tool Information Interface
+=== The MPI Tool Information Interface
 
-==== 15.3.1 Verbosity Levels
+==== Verbosity Levels
 
-==== 15.3.2 Binding MPI Tool Information Interface Variables to MPI Objects
+==== Binding MPI Tool Information Interface Variables to MPI Objects
 
-==== 15.3.3 Convention for Returning Strings
+==== Convention for Returning Strings
 
-==== 15.3.4 Initialization and Finalization
+==== Initialization and Finalization
 
-==== 15.3.5 Datatype System
+==== Datatype System
 
-==== 15.3.6 Control Variables
+==== Control Variables
 
-==== 15.3.7 Performance Variables
+==== Performance Variables
 
-===== 15.3.7.1 Performance Variable Classes
+===== Performance Variable Classes
 
-===== 15.3.7.2 Performance Variable Query Functions
+===== Performance Variable Query Functions
 
-===== 15.3.7.3 Performance Experiment Sessions
+===== Performance Experiment Sessions
 
-===== 15.3.7.4 Handle Allocation and Deallocation
+===== Handle Allocation and Deallocation
 
-===== 15.3.7.5 Starting and Stopping of Performance Variables
+===== Starting and Stopping of Performance Variables
 
-===== 15.3.7.6 Performance Variable Access Functions
+===== Performance Variable Access Functions
 
-==== 15.3.8 Events
+==== Events
 
-===== 15.3.8.1 Event Sources
+===== Event Sources
 
-===== 15.3.8.2 Callback Safety Requirements
+===== Callback Safety Requirements
 
-===== 15.3.8.3 Event Type Query Functions
+===== Event Type Query Functions
 
-===== 15.3.8.4 Handle Allocation and Deallocation
+===== Handle Allocation and Deallocation
 
-===== 15.3.8.5 Handling Dropped Events
+===== Handling Dropped Events
 
-===== 15.3.8.6 Reading Event Data
+===== Reading Event Data
 
-===== 15.3.8.7 Reading Event Meta Data
+===== Reading Event Meta Data
 
-==== 15.3.9 Variable Categorization
+==== Variable Categorization
 
-===== 13.3.9.1 Category Query Functions
+===== Category Query Functions
 
-===== 13.3.9.2 Category Member Query Functions
+===== Category Member Query Functions
 
-==== 15.3.10 Return Codes for the MPI Tool Information Interface
+==== Return Codes for the MPI Tool Information Interface
 
-==== 15.3.11 Profiling Interface
+==== Profiling Interface
 
-== Chapter 16 Deprecated Interfaces
+== Deprecated Interfaces
 
-=== 16.1 Deprecated since MPI-2.0
+=== Deprecated since MPI-2.0
 
-=== 16.2 Deprecated since MPI-2.2
-=== 16.3 Deprecated since MPI-4.0
+=== Deprecated since MPI-2.2
+=== Deprecated since MPI-4.0
 
-== Chapter 17 Removed Interfaces
+== Removed Interfaces
 
-=== 17.1 Removed MPI-1 Bindings
+=== Removed MPI-1 Bindings
 
-==== 17.1.1 Overview
+==== Overview
 
-==== 17.1.2 Removed MPI-1 Functions
+==== Removed MPI-1 Functions
 
-==== 17.1.3 Removed MPI-1 Datatypes
+==== Removed MPI-1 Datatypes
 
-==== 17.1.4 Removed MPI-1 Constants
+==== Removed MPI-1 Constants
 
-==== 17.1.5 Removed MPI-1 Callback Prototypes
+==== Removed MPI-1 Callback Prototypes
 
-=== 17.2 C++ Bindings
+=== C++ Bindings
 
-== Chapter 18 Semantic Changes and Warnings
-=== 18.1 Semantic Changes
+== Semantic Changes and Warnings
+=== Semantic Changes
 
-==== 18.1.1 Semantic Changes Starting in MPI-4.0
+==== Semantic Changes Starting in MPI-4.0
 
-=== 18.2 Additional Warnings
+=== Additional Warnings
 
-==== 18.2.1 Warnings Starting in MPI-4.0
+==== Warnings Starting in MPI-4.0
 
-== Chapter 19 Language Bindings
+== Language Bindings
 
-=== 19.1 Support for Fortran
+=== Support for Fortran
 
-==== 19.1.1 Overview
+==== Overview
 
-==== 19.1.2 Fortran Support Through the mpi_f08 Module
+==== Fortran Support Through the mpi_f08 Module
 
-==== 19.1.3 Fortran Support Through the mpi Module
+==== Fortran Support Through the mpi Module
 
-==== 19.1.4 Fortran Support Through the mpif.h Include File
+==== Fortran Support Through the mpif.h Include File
 
-==== 19.1.5 Interface Specifications, Procedure Names, and the Profiling Interface798
+==== Interface Specifications, Procedure Names, and the Profiling Interface798
 
-==== 19.1.6 MPI for Different Fortran Standard Versions
+==== MPI for Different Fortran Standard Versions
 
-==== 19.1.7 Requirements on Fortran Compilers
+==== Requirements on Fortran Compilers
 
-==== 19.1.8 Additional Support for Fortran Register-Memory-Synchronization 808
+==== Additional Support for Fortran Register-Memory-Synchronization 808
 
-==== 19.1.9 Additional Support for Fortran Numeric Intrinsic Types
+==== Additional Support for Fortran Numeric Intrinsic Types
 
-===== 19.1.9.1 Parameterized Datatypes with Specified Precision and Exponent
+===== Parameterized Datatypes with Specified Precision and Exponent
 
-===== 19.1.9.2 Range
+===== Range
 
-===== 19.1.9.3 Support for Size-specific MPI Datatypes
+===== Support for Size-specific MPI Datatypes
 
-===== 19.1.9.4 Communication With Size-specific Types
+===== Communication With Size-specific Types
 
-==== 19.1.10 Problems With Fortran Bindings for MPI
+==== Problems With Fortran Bindings for MPI
 
-==== 19.1.11 Problems Due to Strong Typing
+==== Problems Due to Strong Typing
 
-==== 19.1.12 Problems Due to Data Copying and Sequence Association with Subscript Triplets
+==== Problems Due to Data Copying and Sequence Association with Subscript Triplets
 
-==== 19.1.13 Problems Due to Data Copying and Sequence Association with Vector Subscripts
+==== Problems Due to Data Copying and Sequence Association with Vector Subscripts
 
-==== 19.1.14 Special Constants
+==== Special Constants
 
-==== 19.1.15 Fortran Derived Types
+==== Fortran Derived Types
 
-==== 19.1.16 Optimization Problems, an Overview
+==== Optimization Problems, an Overview
 
-==== 19.1.17 Problems with Code Movement and Register Optimization
+==== Problems with Code Movement and Register Optimization
 
-===== 19.1.17.1 Nonblocking Operations
+===== Nonblocking Operations
 
-===== 19.1.17.2 Persistent Operations
+===== Persistent Operations
 
-===== 19.1.17.3 One-sided Communication
+===== One-sided Communication
 
-===== 19.1.17.4 MPI_BOTTOM and Combining Independent Variables in Datatypes 827
+===== MPI_BOTTOM and Combining Independent Variables in Datatypes 827
 
-===== 19.1.17.5 Solutions
+===== Solutions
 
-===== 19.1.17.6 The Fortran ASYNCHRONOUS Attribute
+===== The Fortran ASYNCHRONOUS Attribute
 
-===== 19.1.17.7 Calling MPI_F_SYNC_REG
+===== Calling MPI_F_SYNC_REG
 
-===== 19.1.17.8 A User Defined Routine Instead of MPI_F_SYNC_REG
+===== A User Defined Routine Instead of MPI_F_SYNC_REG
 
-===== 19.1.17.9 Module Variables and COMMON Blocks
+===== Module Variables and COMMON Blocks
 
-===== 19.1.17.10 The (Poorly Performing) Fortran VOLATILE Attribute
+===== The (Poorly Performing) Fortran VOLATILE Attribute
 
-===== 19.1.17.11 The Fortran TARGET Attribute
+===== The Fortran TARGET Attribute
 
-==== 19.1.18 Temporary Data Movement and Temporary Memory Modification 832
+==== Temporary Data Movement and Temporary Memory Modification 832
 
-==== 19.1.19 Permanent Data Movement
+==== Permanent Data Movement
 
-==== 19.1.20 Comparison with C
+==== Comparison with C
 
-=== 19.2 Support for Large Count and Large Byte Displacement
+=== Support for Large Count and Large Byte Displacement
 
-=== 19.3 Language Interoperability
+=== Language Interoperability
 
-==== 19.3.1 Introduction
+==== Introduction
 
-==== 19.3.2 Assumptions
+==== Assumptions
 
-==== 19.3.3 Initialization
+==== Initialization
 
-==== 19.3.4 Transfer of Handles
+==== Transfer of Handles
 
-==== 19.3.5 Status
+==== Status
 
-==== 19.3.6 MPI Opaque Objects
+==== MPI Opaque Objects
 
-===== 19.3.6.1 Datatypes
+===== Datatypes
 
-===== 19.3.6.2 Callback Functions
+===== Callback Functions
 
-===== 19.3.6.3 Error Handlers
+===== Error Handlers
 
-===== 19.3.6.4 Reduce Operations
+===== Reduce Operations
 
-==== 19.3.7 Attributes
+==== Attributes
 
-==== 19.3.8 Extra-State
+==== Extra-State
 
-==== 19.3.9 Constants
+==== Constants
 
-==== 19.3.10 Interlanguage Communication
+==== Interlanguage Communication
 
-== Chapter A Language Bindings Summary
+== Language Bindings Summary
 
-=== A.1 Defined Values and Handles
+=== Defined Values and Handles
 
-==== A.1.1 Defined Constants
+==== Defined Constants
 
-==== A.1.2 Types
+==== Types
 
-==== A.1.3 Prototype Definitions
+==== Prototype Definitions
 
-===== A.1.3.1 C Bindings
+===== C Bindings
 
-===== A.1.3.2 Fortran 2008 Bindings with the mpi_f08 Module
+===== Fortran 2008 Bindings with the mpi_f08 Module
 
-===== A.1.3.3 Fortran Bindings with mpif.h or the mpi Module
+===== Fortran Bindings with mpif.h or the mpi Module
 
-==== A.1.4 Deprecated Prototype Definitions
+==== Deprecated Prototype Definitions
 
-==== A.1.5 String Values
+==== String Values
 
-===== A.1.5.1 Default Communicator Names
+===== Default Communicator Names
 
-===== A.1.5.2 Reserved Data Representations
+===== Reserved Data Representations
 
-===== A.1.5.3 Process Set Names
+===== Process Set Names
 
-===== A.1.5.4 Info Keys
+===== Info Keys
 
-===== A.1.5.5 Info Values
+===== Info Values
 
-=== A.2 Summary of the Semantics of all Op.-Related Routines
+=== Summary of the Semantics of all Op.-Related Routines
 
-=== A.3 C Bindings
+=== C Bindings
 
-==== A.3.1 Point-to-Point Communication C Bindings
+==== Point-to-Point Communication C Bindings
 
-==== A.3.2 Partitioned Communication C Bindings
+==== Partitioned Communication C Bindings
 
-==== A.3.3 Datatypes C Bindings
+==== Datatypes C Bindings
 
-==== A.3.4 Collective Communication C Bindings
+==== Collective Communication C Bindings
 
-==== A.3.5 Groups, Contexts, Communicators, and Caching C Bindings
+==== Groups, Contexts, Communicators, and Caching C Bindings
 
-==== A.3.6 Process Topologies C Bindings
+==== Process Topologies C Bindings
 
-==== A.3.7 MPI Environmental Management C Bindings
+==== MPI Environmental Management C Bindings
 
-==== A.3.8 The Info Object C Bindings
+==== The Info Object C Bindings
 
-==== A.3.9 Process Creation and Management C Bindings
+==== Process Creation and Management C Bindings
 
-==== A.3.10 One-Sided Communications C Bindings
+==== One-Sided Communications C Bindings
 
-==== A.3.11 External Interfaces C Bindings
+==== External Interfaces C Bindings
 
-==== A.3.12 I/O C Bindings
+==== I/O C Bindings
 
-==== A.3.13 Language Bindings C Bindings
+==== Language Bindings C Bindings
 
-==== A.3.14 Tools / Profiling Interface C Bindings
+==== Tools / Profiling Interface C Bindings
 
-==== A.3.15 Tools / MPI Tool Information Interface C Bindings
+==== Tools / MPI Tool Information Interface C Bindings
 
-==== A.3.16 Deprecated C Bindings
+==== Deprecated C Bindings
 
-=== A.4 Fortran 2008 Bindings with the mpi_f08 Module
+=== Fortran 2008 Bindings with the mpi_f08 Module
 
-==== A.4.1 Point-to-Point Communication Fortran 2008 Bindings
+==== Point-to-Point Communication Fortran 2008 Bindings
 
-==== A.4.2 Partitioned Communication Fortran 2008 Bindings
+==== Partitioned Communication Fortran 2008 Bindings
 
-==== A.4.3 Datatypes Fortran 2008 Bindings
+==== Datatypes Fortran 2008 Bindings
 
-==== A.4.4 Collective Communication Fortran 2008 Bindings
+==== Collective Communication Fortran 2008 Bindings
 
-==== A.4.5 Groups, Contexts, Communicators, and Caching Fortran 2008 Bindings
+==== Groups, Contexts, Communicators, and Caching Fortran 2008 Bindings
 
-==== A.4.6 Process Topologies Fortran 2008 Bindings
+==== Process Topologies Fortran 2008 Bindings
 
-==== A.4.7 MPI Environmental Management Fortran 2008 Bindings
+==== MPI Environmental Management Fortran 2008 Bindings
 
-==== A.4.8 The Info Object Fortran 2008 Bindings
+==== The Info Object Fortran 2008 Bindings
 
-==== A.4.9 Process Creation and Management Fortran 2008 Bindings
+==== Process Creation and Management Fortran 2008 Bindings
 
-==== A.4.10 One-Sided Communications Fortran 2008 Bindings
+==== One-Sided Communications Fortran 2008 Bindings
 
-==== A.4.11 External Interfaces Fortran 2008 Bindings
+==== External Interfaces Fortran 2008 Bindings
 
-==== A.4.12 I/O Fortran 2008 Bindings
+==== I/O Fortran 2008 Bindings
 
-==== A.4.13 Language Bindings Fortran 2008 Bindings
+==== Language Bindings Fortran 2008 Bindings
 
-==== A.4.14 Tools / Profiling Interface Fortran 2008 Bindings
+==== Tools / Profiling Interface Fortran 2008 Bindings
 
-==== A.4.15 Deprecated Fortran 2008 Bindings
+==== Deprecated Fortran 2008 Bindings
 
-=== A.5 Fortran Bindings with mpif.h or the mpi Module
+=== Fortran Bindings with mpif.h or the mpi Module
 
-==== A.5.1 Point-to-Point Communication Fortran Bindings
+==== Point-to-Point Communication Fortran Bindings
 
-==== A.5.2 Partitioned Communication Fortran Bindings
+==== Partitioned Communication Fortran Bindings
 
-==== A.5.3 Datatypes Fortran Bindings
+==== Datatypes Fortran Bindings
 
-==== A.5.4 Collective Communication Fortran Bindings
+==== Collective Communication Fortran Bindings
 
-==== A.5.5 Groups, Contexts, Communicators, and Caching Fortran Bindings 1020
+==== Groups, Contexts, Communicators, and Caching Fortran Bindings 1020
 
-==== A.5.6 Process Topologies Fortran Bindings
+==== Process Topologies Fortran Bindings
 
-==== A.5.7 MPI Environmental Management Fortran Bindings
+==== MPI Environmental Management Fortran Bindings
 
-==== A.5.8 The Info Object Fortran Bindings
+==== The Info Object Fortran Bindings
 
-==== A.5.9 Process Creation and Management Fortran Bindings
+==== Process Creation and Management Fortran Bindings
 
-==== A.5.10 One-Sided Communications Fortran Bindings
+==== One-Sided Communications Fortran Bindings
 
-==== A.5.11 External Interfaces Fortran Bindings
+==== External Interfaces Fortran Bindings
 
-==== A.5.12 I/O Fortran Bindings
+==== I/O Fortran Bindings
 
-==== A.5.13 Language Bindings Fortran Bindings
+==== Language Bindings Fortran Bindings
 
-==== A.5.14 Tools / Profiling Interface Fortran Bindings
+==== Tools / Profiling Interface Fortran Bindings
 
-==== A.5.15 Deprecated Fortran Bindings
+==== Deprecated Fortran Bindings
 
-== Chapter B Change-Log
+== Change-Log
 
-=== B.1 Changes from Version 3.1 to Version 4.0
+=== Changes from Version 3.1 to Version 4.0
 
-==== B.1.1 Fixes to Errata in Previous Versions of MPI
+==== Fixes to Errata in Previous Versions of MPI
 
-==== B.1.2 Changes in MPI-4.0
+==== Changes in MPI-4.0
 
-=== B.2 Changes from Version 3.0 to Version 3.1
+=== Changes from Version 3.0 to Version 3.1
 
-==== B.2.1 Fixes to Errata in Previous Versions of MPI
+==== Fixes to Errata in Previous Versions of MPI
 
-==== B.2.2 Changes in MPI-3.1
+==== Changes in MPI-3.1
 
-=== B.3 Changes from Version 2.2 to Version 3.0
+=== Changes from Version 2.2 to Version 3.0
 
-==== B.3.1 Fixes to Errata in Previous Versions of MPI
+==== Fixes to Errata in Previous Versions of MPI
 
-==== B.3.2 Changes in MPI-3.0
+==== Changes in MPI-3.0
 
-=== B.4 Changes from Version 2.1 to Version 2.2
+=== Changes from Version 2.1 to Version 2.2
 
-=== B.5 Changes from Version 2.0 to Version 2.1
-
+=== Changes from Version 2.0 to Version 2.1
 
 == Chapter Bibliography
 
-== Chapter General Index
+== Index
 
-== Chapter Examples Index
+== Index
 
-== Chapter MPI Constant and Predefined Handle Index
+== Constant and Predefined Handle Index
 
-== Chapter MPI Declarations Index
+== Declarations Index
 
-== Chapter MPI Callback Function Prototype Index
+== Callback Function Prototype Index
 
-== Chapter MPI Function Index
+== Function Index
 
