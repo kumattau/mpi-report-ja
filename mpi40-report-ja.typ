@@ -1,64 +1,95 @@
-= MPI: A Message-Passing Interface Standard Version 4.0
+#set document(
+  title: "MPI: A Message-Passing Interface Standard Version 4.0",
+  author: "Message Passing Interface Forum"
+)
 
-:doctype: book
-:sectnums:
-:sectnumlevels: 3
-:toc: left
-:toclevels: 4
+#import "@preview/codelst:1.0.0": sourcecode
+#import "@preview/colorful-boxes:1.1.0": colorbox
 
-== List of Figures
+#set par(justify: true, leading: 0.8em)
+#set smartquote(enabled: false)
+#set text(font: "Harano Aji Mincho", size: 11pt, hyphenate: false, kerning: false)
+#show raw: set text(font: "Tex Gyre Cursor", size: 11.5pt, hyphenate: false, kerning: false)
 
-== List of Tables
+#set outline(indent: 1em, title: none)
+#show outline: set text(size: 9.5pt)
 
-== Acknowledgements
+#set heading(numbering: "1.")
+#show heading.where(level: 1): it => {pagebreak(to: "odd"); it}
 
-== Introduction to MPI
+#set page(numbering: "1 / 1", header: [
+  #set align(right)
+  #show text: strong
+  #locate(loc => {
+    let hs = heading.where(level: 1).or(heading.where(level: 2))
+    for h in query(hs, loc) {
+      let hloc = h.location()
+      if hloc.page() == loc.page() and hloc.position().y < 80pt {
+	return
+      }
+    }
+    let hs = query(selector(hs).before(loc), loc)
+    if hs != () {
+      hs.last().body
+    }
+  })
+])
 
-=== Overview and Goals
+#let rationale(body) = colorbox(color: "blue",  title: "Rational.")[#body]
+#let adv_users(body) = colorbox(color: "green", title: "Advice to users.")[#body]
+#let adv_impls(body) = colorbox(color: "red",   title: "Advice to implementors.")[#body]
 
-=== Background of MPI-1.0
+#heading(numbering: none, outlined: false, [Contents])
 
-=== Background of MPI-1.1, MPI-1.2, and MPI-2.0
+#outline()
 
-=== Background of MPI-1.3 and MPI-2.1
+= Introduction to MPI
 
-=== Background of MPI-2.2
+== Overview and Goals
 
-=== Background of MPI-3.0
+== Background of MPI-1.0
 
-=== Background of MPI-3.1
+== Background of MPI-1.1, MPI-1.2, and MPI-2.0
 
-=== Background of MPI-4.0
+== Background of MPI-1.3 and MPI-2.1
 
-=== Who Should Use This Standard?
+== Background of MPI-2.2
 
-=== What Platforms Are Targets for Implementation?
+== Background of MPI-3.0
 
-=== What Is Included in the Standard?
+== Background of MPI-3.1
 
-=== What Is Not Included in the Standard?
+== Background of MPI-4.0
 
-=== Organization of This Document
+== Who Should Use This Standard?
 
-== MPI Terms and Conventions
+== What Platforms Are Targets for Implementation?
 
-=== Document Notation
+== What Is Included in the Standard?
 
-=== Naming Conventions
+== What Is Not Included in the Standard?
 
-=== Procedure Specification
+== Organization of This Document
 
-=== Semantic Terms
+= MPI Terms and Conventions
 
-==== MPI Operations
+== Document Notation
 
-==== MPI Procedures
+== Naming Conventions
 
-==== MPI Datatypes
+== Procedure Specification
 
-=== Datatypes
+== Semantic Terms
 
-==== Opaque Objects
+=== MPI Operations
+
+=== MPI Procedures
+
+=== MPI Datatypes
+
+== Datatypes
+
+=== Opaque Objects
 
 MPI manages system memory that is used for buffering messages and for storing internal representations of various MPI objects such as groups, communicators, datatypes, etc.
 This memory is not directly accessible to the user, and objects stored there are opaque: their size and shape is not visible to the user.
@@ -79,53 +110,46 @@ The internal handle value is identical to the Fortran INTEGER value used in the 
 The operators ".EQ.", ".NE.", "==" and "/=" are overloaded to allow the comparison of these handles.
 The type names are identical to the names in C, except that they are not case sensitive.
 
-USE mpi または INCLUDE 'mpif.h' を使用する Fortran では、すべてのハンドルの型は INTEGER です。
-USE mpi_f08 を使用する Fortran および C では、オブジェクトのカテゴリごとに異なるハンドル型が定義されます。
-USE mpi_f08 を使用する Fortran では、ハンドルは1つの要素 INTEGER :: MPI_VAL です。
-内部ハンドルの値は mpi モジュールと mpif.h で使用される Fortran INTEGER と同じです。
-演算子 ".EQ.", ".NE.", "==", "/=" はこれらのハンドルの比較を可能にするためにオーバーロードされます。
+`USE mpi`または`INCLUDE 'mpif.h'`を使用するFortranでは、すべてのハンドルの型は`INTEGER`です。
+`USE mpi_f08`を使用するFortranおよびC言語では、オブジェクトのカテゴリごとに異なるハンドル型が定義されます。
+`USE mpi_f08`を使用するFortranでは、ハンドルは1つの要素`INTEGER :: MPI_VAL`です。
+内部ハンドルの値は`mpi`モジュールと`mpif.h`で使用されるFortranの`INTEGER`と同じです。
+演算子`.EQ.`, `.NE.`, `==`, `/=`はこれらのハンドルの比較を可能にするためにオーバーロードされます。
 型名は、大文字と小文字を区別しないことを除いて、C言語の型名と同じです。
 
-[source,fortran]
-----
+#sourcecode[```
 TYPE, BIND(C) :: MPI_Comm
- INTEGER :: MPI_VAL
+  INTEGER :: MPI_VAL
 END TYPE MPI_Comm
-----
+```]
 
 The C types must support the use of the assignment and equality operators.
 
-Cの型は、代入演算子と等号演算子の使用をサポートしなければなりません。
+C言語の型は、代入演算子と等号演算子の使用をサポートしなければなりません。
 
-NOTE: *Advice to implementors.*
+#adv_impls[
 In Fortran, the handle can be an index into a table of opaque objects in a system table; in C it can be such an index or a pointer to the object.
-(End of advice to implementors.)
 
-NOTE: *実装者へのアドバイス*
 Fortranでは、ハンドルはシステム・テーブル内の不透明オブジェクトのテーブルへのインデックスです。
-(実装者へのアドバイスの終わり)
+]
 
-NOTE: *Rationale.*
+#rationale[
 Since the Fortran integer values are equivalent, applications can easily convert MPI handles between all three supported Fortran methods.
 For example, an integer communicator handle COMM can be converted directly into an exactly equivalent mpi_f08 communicator handle named comm_f08 by comm_f08%MPI_VAL=COMM, and vice versa.
 The use of the INTEGER defined handles and the BIND(C) derived type handles is different: Fortran 2003 (and later) define that BIND(C) derived types can be used within user defined common blocks, but it is up to the rules of the companion C compiler how many numerical storage units are used for these BIND(C) derived type handles.
 Most compilers use one unit for both, the INTEGER handles and the handles defined as BIND(C) derived types.
-(End of rationale.)
 
-NOTE: *根拠*
 Fortranの整数値は等価であるため、アプリケーションはサポートされている3つのFortranメソッド間でMPIハンドルを簡単に変換することができます。
-例えば、整数値のコミュニケータハンドルCOMMはcomm_f08%MPI_VAL=COMMによってcomm_f08 という名前の mpi_f08 コミュニケータハンドルに直接変換することができます。
-INTEGER定義ハンドルとBIND(C)派生型ハンドルの使用方法は異なります: Fortran 2003(およびそれ以降)では、BIND(C)派生型はユーザ定義の共通ブロック内で使用できると定義されていますが、これらのBIND(C)派生型ハンドルに何個の数値記憶ユニットを使用するかはコンパイラの規則次第です。
-ほとんどのコンパイラは、INTEGERハンドルとBIND©派生型として定義されたハンドルの両方に1単位を使用します。
-(根拠終わり)
+例えば、整数値のコミュニケータハンドル`COMM`は`comm_f08%MPI_VAL=COMM`によって`comm_f08`という名前の`mpi_f08`コミュニケータハンドルに直接変換することができます。
+`INTEGER`定義ハンドルと`BIND(C)`派生型ハンドルの使用方法は異なります: Fortran 2003（およびそれ以降）では、`BIND(C)`派生型はユーザ定義の共通ブロック内で使用できると定義されていますが、これらの`BIND(C)`派生型ハンドルに何個の数値記憶ユニットを使用するかはコンパイラの規則次第です。
+ほとんどのコンパイラは、`INTEGER`ハンドルと`BIND(C)`派生型として定義されたハンドルの両方に1単位を使用します。
+]
 
-NOTE: *Advice to users.*
+#adv_users[
 If a user wants to substitute mpif.h or the mpi module by the mpi_f08 module and the application program stores a handle in a Fortran common block then it is necessary to change the Fortran support method in all application routines that use this common block, because the number of numerical storage units of such a handle can be different in the two modules.
-(End of advice to users.)
 
-NOTE: *ユーザへのアドバイス*
-もし、ユーザが mpif.h または mpi モジュールを mpi_f08 モジュールで置き換えたい場合で、アプリケーションプログラムが Fortran 共通ブロックにハンドルを格納する場合、この共通ブロックを使用するすべてのアプリケーションルーチンで Fortran サポートメソッドを変更する必要があります。
-(ユーザーへのアドバイスの終わり)
+もし、ユーザが`mpif.h`または`mpi`モジュールを`mpi_f08`モジュールで置き換えたい場合で、アプリケーションプログラムがFortranの共通ブロックにハンドルを格納する場合、この共通ブロックを使用するすべてのアプリケーションルーチンでFortranサポートメソッドを変更する必要があります。
+]
 
 Opaque objects are allocated and deallocated by calls that are specific to each object type.
 These are listed in the sections where the objects are described.
@@ -137,10 +161,10 @@ Comparisons to this constant are used to test for validity of the handle.
 
 不透明オブジェクトは、各オブジェクトタイプに固有の呼び出しによって割り当てと割り当て解除が行われます。
 これらの呼び出しは、オブジェクトが説明されているセクションにリストされています。
-呼び出しは、型が一致する handle 引数を受け取ります。
-allocate呼び出しでは、これはオブジェクトへの有効な参照を返すOUT引数です。
-deallocate呼び出しでは、これは "invalid handle"値で返すINOUT引数です。
-MPIは各オブジェクト型に対して "無効なハンドル"定数を提供します。
+呼び出しは、型が一致するハンドル引数を受け取ります。
+allocate呼び出しでは、これはオブジェクトへの有効な参照を返す`OUT`引数です。
+deallocate呼び出しでは、これは`invalid handle`値で返す`INOUT`引数です。
+MPIは各オブジェクト型に対して 無効なハンドル定数を提供します。
 この定数との比較がハンドルの有効性をテストするために使用されます。
 
 A call to a deallocate routine invalidates the handle and marks the object for deallocation.
@@ -159,74 +183,77 @@ The user must not free such objects.
 MPIは、特定の定義済み不透明オブジェクトと、これらのオブジェクトへの定義済み静的ハンドルを提供します。
 ユーザはそのようなオブジェクトを解放してはいけません。
 
-NOTE: *Rationale.*
+#rationale[
 This design hides the internal representation used for MPI data structures, thus allowing similar calls in C and Fortran.
 It also avoids conflicts with the typing rules in these languages, and easily allows future extensions of functionality.
-The mechanism for opaque objects used here loosely follows the POSIX Fortran binding standard. +
+The mechanism for opaque objects used here loosely follows the POSIX Fortran binding standard.
+
+この設計は、MPIデータ構造に使用される内部表現を隠蔽するため、C言語やFortranでも同様の呼び出しが可能です。
+また、これらの言語の型付け規則との衝突を回避し、将来的な機能拡張を容易にします。
+ここで使用されている不透明オブジェクトのメカニズムは、POSIXのFortranバインディング標準に緩く従っています。
+
 The explicit separation of handles in user space and objects in system space allows space-reclaiming and deallocation calls to be made at appropriate points in the user program.
 If the opaque objects were in user space, one would have to be very careful not to go out of scope before any pending operation requiring that object completed.
-The specified design allows an object to be marked for deallocation, the user program can then go out of scope, and the object itself still persists until any pending operations are complete. +
+The specified design allows an object to be marked for deallocation, the user program can then go out of scope, and the object itself still persists until any pending operations are complete.
+
+ユーザー空間のハンドルとシステム空間のオブジェクトを明示的に分離することで、ユーザープログラムの適切な箇所で空間奪還と解放の呼び出しを行うことができます。
+不透明なオブジェクトがユーザー空間にあった場合、そのオブジェクトを必要とする保留中の操作が完了する前にスコープ外に出ないように、細心の注意を払わなければなりません。
+指定された設計では、オブジェクトに割り当て解除のマークを付けることができ、ユーザー・プログラムはスコープ外に出ることができます。
+
 The requirement that handles support assignment/comparison is made since such operations are common.
 This restricts the domain of possible implementations.
 The alternative in C would have been to allow handles to have been an arbitrary, opaque type.
 This would force the introduction of routines to do assignment and comparison, adding complexity, and was therefore ruled out.
-In Fortran, the handles are defined such that assignment and comparison are available through the operators of the language or overloaded versions of these operators. (End of rationale.)
+In Fortran, the handles are defined such that assignment and comparison are available through the operators of the language or overloaded versions of these operators.
 
-NOTE: *根拠*
-この設計は、MPIデータ構造に使用される内部表現を隠蔽するため、CやFortranでも同様の呼び出しが可能です。
-また、これらの言語の型付け規則との衝突を回避し、将来的な機能拡張を容易にします。
-ここで使用されている不透明オブジェクトのメカニズムは、POSIX Fortranバインディング標準に緩く従っています。 +
-ユーザー空間のハンドルとシステム空間のオブジェクトを明示的に分離することで、ユーザープログラムの適切な箇所で空間奪還と解放の呼び出しを行うことができます。
-不透明なオブジェクトがユーザー空間にあった場合、そのオブジェクトを必要とする保留中の操作が完了する前にスコープ外に出ないように、細心の注意を払わなければなりません。
-指定された設計では、オブジェクトに割り当て解除のマークを付けることができ、ユーザー・プログラムはスコープ外に出ることができます。 +
-ハンドルの割り当て/比較をサポートするという要件は、そのような操作が一般的であるためです。
+ハンドルの代入と比較をサポートするという要件は、そのような操作が一般的であるためです。
 これにより、実装可能な領域が制限されます。
 C言語の代替案としては、ハンドルを任意の不透明な型にすることも可能だったと思います。
 この場合、代入と比較を行うルーチンを導入しなければならなくなり、複雑さが増すため、除外されました。
-Fortranでは、ハンドルの代入と比較は、その言語の演算子か、これらの演算子のオーバーロード版で利用できるように定義されています。(根拠終わり)
+Fortranでは、ハンドルの代入と比較は、その言語の演算子か、これらの演算子のオーバーロード版で利用できるように定義されています。
+]
 
-NOTE: *Advice to users.*
+#adv_users[
 A user may accidentally create a dangling reference by assigning to a handle the value of another handle, and then deallocating the object associated with these handles.
 Conversely, if a handle variable is deallocated before the associated object is freed, then the object becomes inaccessible (this may occur, for example, if the handle is a local variable within a subroutine, and the subroutine is exited before the associated object is deallocated).
-It is the user’s responsibility to avoid adding or deleting references to opaque objects, except as a result of MPI calls that allocate or deallocate such objects. (End of advice to users.)
+It is the user’s responsibility to avoid adding or deleting references to opaque objects, except as a result of MPI calls that allocate or deallocate such objects.
 
-NOTE: *ユーザへのアドバイス*
 ユーザは、ハンドルに別のハンドルの値を代入し、その後これらのハンドルに関連付けられたオブジェクトを解放することで、誤ってぶら下がり参照を作成する可能性があります。
 逆に、関連するオブジェクトが解放される前にハンドル変数が解放されると、そのオブジェクトはアクセスできなくなります（例えば、ハンドルがサブルーチン内のローカル変数であり、関連するオブジェクトが解放される前にサブルーチンが終了した場合などに、このような現象が発生する可能性があります）。
-不透明なオブジェクトへの参照を追加したり削除したりしないようにするのは、そのようなオブジェクトを割り当てたり解放したりするMPI呼び出しの結果以外では、ユーザの責任です。(ユーザへの忠告を終わります)。
+不透明なオブジェクトへの参照を追加したり削除したりしないようにするのは、そのようなオブジェクトを割り当てたり解放したりするMPI呼び出しの結果以外では、ユーザの責任です。
+]
 
-NOTE: *Advice to implementors.*
+#adv_impls[
 The intended semantics of opaque objects is that opaque objects are separate from one another; each call to allocate such an object copies all the information required for the object.
 Implementations may avoid excessive copying by substituting referencing for copying.
 For example, a derived datatype may contain references to its components, rather than copies of its components; a call to MPI_COMM_GROUP may return a reference to the group associated with the communicator, rather than a copy of this group.
-In such cases, the implementation must maintain reference counts, and allocate and deallocate objects in such a way that the visible effect is as if the objects were copied. (End of advice to implementors.)
+In such cases, the implementation must maintain reference counts, and allocate and deallocate objects in such a way that the visible effect is as if the objects were copied.
 
-NOTE: *実装者へのアドバイス*
 不透明オブジェクトの意図されたセマンティクスは、不透明オブジェクトは互いに分離しているということです。そのようなオブジェクトを割り当てるための各呼び出しは、そのオブジェクトに必要なすべての情報をコピーします。
 実装では、コピーの代わりに参照を使用することで、過剰なコピーを避けることができます。
-MPI_COMM_GROUP を呼び出すと、そのグループのコピーではなく、コミュニケータに関連付けられたグループへの参照が返されます。
-このような場合、実装は参照カウントを維持し、オブジェクトがコピーされたかのように見えるようにオブジェクトを割り当てたり、割り当て解除したりしなければなりません。(実装者へのアドバイスはここまで）。
+`MPI_COMM_GROUP`を呼び出すと、そのグループのコピーではなく、コミュニケータに関連付けられたグループへの参照が返されます。
+このような場合、実装は参照カウントを維持し、オブジェクトがコピーされたかのように見えるようにオブジェクトを割り当てたり、割り当て解除したりしなければなりません。
+]
 
+=== Array Arguments
 
-==== Array Arguments
+=== State
 
-==== State
-
-==== Named Constants
+=== Named Constants
 
 MPI procedures sometimes assign a special meaning to a special value of a basic type argument; e.g., tag is an integer-valued argument of point-to-point communication operations, with a special wild-card value, MPI_ANY_TAG.
 Such arguments will have a range of regular values, which is a proper subrange of the range of values of the corresponding basic type; special values (such as MPI_ANY_TAG) will be outside the regular range.
 The range of regular values, such as tag, can be queried using environmental inquiry functions, see Chapter 9.
 The range of other values, such as source, depends on values given by other MPI routines (in the case of source it is the communicator size).
 
-MPI手続きは、基本型の引数の特別な値に特別な意味を割り当てることがあります。例えば、tagはポイントツーポイント通信操作の整数値の引数で、MPI_ANY_TAGという特別なワイルドカード値を持ちます。
-このような引数には、対応する基本型の値の範囲の適切な部分範囲である正規値の範囲があります。特殊な値(MPI_ANY_TAGなど)は正規の範囲外となります。
-tagのような正規値の範囲は、環境問い合わせ関数を使用して問い合わせることができます。
-source のような他の値の範囲は、他の MPI ルーチンで与えられた値に依存します (source の場合はコミュニケータサイズです)。
+MPI手続きは、基本型の引数の特別な値に特別な意味を割り当てることがあります。例えば、`tag`はポイントツーポイント通信操作の整数値の引数で、`MPI_ANY_TAG`という特別なワイルドカード値を持ちます。
+このような引数には、対応する基本型の値の範囲の適切な部分範囲である正規値の範囲があります。特殊な値（`MPI_ANY_TAG`など）は正規の範囲外となります。
+`tag`のような正規値の範囲は、環境問い合わせ関数を使用して問い合わせることができます。
+`source`のような他の値の範囲は、他のMPIルーチンで与えられた値に依存します（`source`の場合はコミュニケータサイズです）。
 
 MPI also provides predefined named constant handles, such as MPI_COMM_WORLD.
 
-MPI は MPI_COMM_WORLD のような定義済みの名前付き定数ハンドルも提供します。
+MPIは`MPI_COMM_WORLD`のような定義済みの名前付き定数ハンドルも提供します。
 
 All named constants, with the exceptions noted below for Fortran, can be used in initialization expressions or assignments, but not necessarily in array declarations or as labels in C switch or Fortran select/case statements.
 This implies named constants to be link-time but not necessarily compile-time constants.
@@ -235,19 +262,18 @@ These constants do not change values during execution.
 Opaque objects accessed by constant handles are defined and do not change value between MPI initialization (MPI_INIT) and MPI completion (MPI_FINALIZE).
 The handles themselves are constants and can be also used in initialization expressions or assignments.
 
-すべての名前付き定数は、Fortranの例外を除いて、初期化式や代入で使用することができますが、配列宣言やCのswitch文やFortranのselect/case文のラベルとして使用することはできません。
+すべての名前付き定数は、Fortranの例外を除いて、初期化式や代入で使用することができますが、配列宣言やC言語の`switch`文やFortranの`select/case`文のラベルとして使用することはできません。
 これは、名前付き定数がリンク時定数であることを意味しますが、コンパイル時定数であるとは限りません。
-以下に挙げる名前付き定数は、CでもFortranでもコンパイル時定数であることが要求されます。
+以下に挙げる名前付き定数は、C言語でもFortranでもコンパイル時定数であることが要求されます。
 これらの定数は実行中に値が変わることはありません。
-定数ハンドルによってアクセスされる不透明オブジェクトは、MPI の初期化 (MPI_INIT) から MPI の完了 (MPI_FINALIZE) までの間、値が変化しないように定義されています。
+定数ハンドルによってアクセスされる不透明オブジェクトは、MPIの初期化（`MPI_INIT`）からMPIの完了（MPI_FINALIZE）までの間、値が変化しないように定義されています。
 ハンドル自体は定数であり、初期化式や代入で使用することもできます。
 
 The constants that are required to be compile-time constants (and can thus be used for array length declarations and labels in C switch and Fortran case/select statements) are:
 
-コンパイル時定数として要求される定数(配列の長さの宣言やCのswitchやFortranのcase/select文のラベルに使用できる)は以下の通りです:
+コンパイル時定数として要求される定数（配列の長さの宣言やC言語の`switch`やFortranの`case/select`文のラベルに使用できる）は以下の通りです:
 
-[source]
-----
+#sourcecode[```
 MPI_MAX_PROCESSOR_NAME
 MPI_MAX_LIBRARY_VERSION_STRING
 MPI_MAX_ERROR_STRING
@@ -266,14 +292,13 @@ MPI_INTEGER_KIND (Fortran only)
 MPI_OFFSET_KIND (Fortran only)
 MPI_SUBARRAYS_SUPPORTED (Fortran only)
 MPI_ASYNC_PROTECTS_NONBLOCKING (Fortran only)
-----
+```]
 
 The constants that cannot be used in initialization expressions or assignments in Fortran are as follows:
 
 Fortranの初期化式や代入で使用できない定数は以下の通りです:
 
-[source]
-----
+#sourcecode[```
 MPI_BOTTOM
 MPI_STATUS_IGNORE
 MPI_STATUSES_IGNORE
@@ -283,44 +308,42 @@ MPI_ARGV_NULL
 MPI_ARGVS_NULL
 MPI_UNWEIGHTED
 MPI_WEIGHTS_EMPTY
-----
+```]
 
-NOTE: *Advice to implementors.*
+#adv_impls[
 In Fortran the implementation of these special constants may require the use of language constructs that are outside the Fortran standard.
 Using special values for the constants (e.g., by defining them through PARAMETER statements) is not possible because an implementation cannot distinguish these values from valid data.
 Typically, these constants are implemented as predefined static variables (e.g., a variable in an MPI-declared COMMON block), relying on the fact that the target compiler passes data by address. 
 Inside the subroutine, this address can be extracted by some mechanism outside the Fortran standard (e.g., by Fortran extensions or by implementing the function in C).
-(End of advice to implementors.)
 
-NOTE: *実装者へのアドバイス*
 Fortranでは、これらの特殊な定数の実装は、Fortran標準外の言語構造を使用する必要があるかもしれません。
-実装がこれらの値を有効なデータと区別することができないため、定数に特別な値を使用する（例えば、PARAMETER文で定義する）ことはできません。
-通常、これらの定数は、ターゲットコンパイラがアドレスによってデータを渡すという事実に依存して、定義済みの静的変数（例えば、MPI宣言されたCOMMONブロック内の変数）として実装されます。
-サブルーチン内部では、このアドレスはFortran標準外の何らかのメカニズム（例えば、Fortranの拡張やCでの関数の実装）によって抽出することができます。
-(実装者へのアドバイスの終わり)
+実装がこれらの値を有効なデータと区別することができないため、定数に特別な値を使用する（例えば、`PARAMETER`文で定義する）ことはできません。
+通常、これらの定数は、ターゲットコンパイラがアドレスによってデータを渡すという事実に依存して、定義済みの静的変数（例えば、MPI宣言された`COMMON`ブロック内の変数）として実装されます。
+サブルーチン内部では、このアドレスはFortran標準外の何らかのメカニズム（例えば、Fortranの拡張やC言語での関数の実装）によって抽出することができます。
+]
 
 
-==== Choice
+=== Choice
 
-==== Absolute Addresses and Relative Address Displacements
+=== Absolute Addresses and Relative Address Displacements
 
-==== File Offsets
+=== File Offsets
 
-==== Counts
+=== Counts
 
-=== Language Binding
+== Language Binding
 
-==== Deprecated and Removed Interfaces
+=== Deprecated and Removed Interfaces
 
-==== Fortran Binding Issues
+=== Fortran Binding Issues
 
-==== C Binding Issues
+=== C Binding Issues
 
-==== Functions and Macros
+=== Functions and Macros
 
-=== Processes
+== Processes
 
-=== Error Handling
+== Error Handling
 
 MPI provides the user with reliable message transmission. A message sent is always received correctly, and the user does not need to check for transmission errors, time-outs, or other error conditions.
 In other words, MPI does not provide mechanisms for dealing with transmission failures in the communication system.
@@ -361,7 +384,7 @@ The user may specify that no error is fatal, and handle error codes returned by 
 Also, the user may provide user-defined error-handling routines, which will be invoked whenever an MPI call returns abnormally.
 The MPI error handling facilities are described in Section 9.3.
 
-CおよびFortranでは、ほとんどすべてのMPIコールは操作の正常終了を示すコードを返します。
+C言語およびFortranでは、ほとんどすべてのMPIコールは操作の正常終了を示すコードを返します。
 MPIコールは可能な限り、コール中にエラーが発生した場合にエラーコードを返します。
 デフォルトでは、MPIライブラリの実行中に検出されたエラーは、ファイル操作を除いて並列計算を中断させます。
 しかし、MPIはユーザがこのデフォルトを変更し、回復可能なエラーを処理するための機構を提供します。
@@ -377,11 +400,11 @@ When MPI_COMM_SELF is not initialized (i.e., before MPI_INIT / MPI_INIT_THREAD, 
 The Sessions Model is described in Section 11.3.
 
 MPIコールがエラー発生時に意味のあるエラーコードを返すことを制限するいくつかの要因があります。
-あるエラー(例えば、メモリエラー)はMPIライブラリとその出力の状態を壊してしまう可能性があります。
+あるエラー（例えば、メモリエラー）はMPIライブラリとその出力の状態を壊してしまう可能性があります。
 一方、エラーの中には、関連する操作が完了した後に検出されるものもあります。
 また、エラーが発生するようなコミュニケータ、ウィンドウ、ファイルが存在しないものもあります。
-そのような場合、ワールドモデル(セクション11.2を参照)を使用する場合、これらのエラーはコミュニケータMPI_COMM_SELF上で発生します。
-MPI_COMM_SELF が初期化されていない場合 (MPI_INIT / MPI_INIT_THREAD の前、MPI_FINALIZE の後、またはセッションズモデルのみを使用している場合)、エラーは初期エラーハンドラ (起動操作中に設定されます。11.8.4 参照) を発生させます。
+そのような場合、ワールドモデル(セクション11.2を参照)を使用する場合、これらのエラーはコミュニケータ`MPI_COMM_SELF`上で発生します。
+`MPI_COMM_SELF`が初期化されていない場合（`MPI_INIT`/`MPI_INIT_THREAD`の前、`MPI_FINALIZE`の後、またはセッションズモデルのみを使用している場合）、エラーは初期エラーハンドラ（起動操作中に設定されます。11.8.4 参照）を発生させます。
 セッションズ・モデルについてはセクション11.3で説明します。
 
 An example of such a case arises because of the nature of asynchronous communications: MPI calls may initiate operations that continue asynchronously after the call returned.
@@ -389,11 +412,11 @@ Thus, the operation may return with a code indicating successful completion, yet
 If there is a subsequent call that relates to the same operation (e.g., a call that verifies that an asynchronous operation has completed) then the error argument associated with this call will be used to indicate the nature of the error.
 In a few cases, the error may occur after all calls that relate to the operation have completed, so that no error value can be used to indicate the nature of the error (e.g., an error on the receiver in a send with the ready mode).
 
-非同期通信の性質上、このようなケースが発生する: MPI呼び出しは、呼び出しが返った後も非同期で継続する操作を開始することがあります。
+非同期通信の性質上、このようなケースが発生します: MPI呼び出しは、呼び出しが返った後も非同期で継続する操作を開始することがあります。
 MPIコールは、コールが返った後も非同期に継続するオペレーションを開始することがあります。
 したがって、オペレーションが正常に完了したことを示すコードで返ったにもかかわらず、後でエラーが発生することがあります。
-同じ操作に関連する後続の呼び出し(例えば、非同期操作が完了したことを確認する呼び出し)がある場合、この呼び出しに関連するエラー引数は、エラーの性質を示すために使用されます。
-場合によっては、操作に関連するすべての呼が完了した後にエラーが発生し、 エラー値を使用してエラーの性質を示すことができないことがある(たとえば、 レディモードでの送信における受信側のエラー)。
+同じ操作に関連する後続の呼び出し（例えば、非同期操作が完了したことを確認する呼び出し）がある場合、この呼び出しに関連するエラー引数は、エラーの性質を示すために使用されます。
+場合によっては、操作に関連するすべての呼が完了した後にエラーが発生し、エラー値を使用してエラーの性質を示すことができないことがあります（たとえば、 レディモードでの送信における受信側のエラー）。
 
 This document does not specify the state of a computation after an erroneous MPI call has occurred.
 The desired behavior is that a relevant error code be returned, and the effect of the error be localized to the greatest possible extent.
@@ -408,7 +431,7 @@ For example, MPI specifies strict type matching rules between matching send and 
 Implementations may go beyond these type matching rules, and provide automatic type conversion in such situations.
 It will be helpful to generate warnings for such nonconforming behavior.
 
-実装は、ここで誤りと定義されているMPIコールを意味のある形でサポートするために、このドキュメントを越えてもよい。
+実装は、ここで誤りと定義されているMPIコールを意味のある形でサポートするために、このドキュメントを越えてもよいです。
 例えば、MPIは送信操作と受信操作のマッチングに厳格な型マッチングルールを規定しています: 浮動小数点変数を送信して整数を受信することは誤りです。
 実装は、これらの型照合ルールを超えて、そのような状況で自動的な型変換を提供するかもしれません。
 そのような不適合な動作に対する警告を生成することは有益だと思います。
@@ -418,1079 +441,1077 @@ MPI defines a way for users to create new error codes as defined in Section 9.5.
 MPIは、セクション9.5で定義されているように、ユーザが新しいエラーコードを作成する方法を定義しています。
 
 
-=== Implementation Issues
+== Implementation Issues
 
-==== Independence of Basic Runtime Routines
+=== Independence of Basic Runtime Routines
 
-==== Interaction with Signals
+=== Interaction with Signals
+
+== Examples
+
+= Point-to-Point Communication
+
+== Introduction
+
+== Blocking Send and Receive Operations
+
+=== Blocking Send
+
+=== Message Data
+
+=== Message Envelope
+
+=== Blocking Receive
+
+=== Return Status
+
+=== Passing MPI_STATUS_IGNORE for Status
+
+=== Blocking Send-Receive
+
+== Datatype Matching and Data Conversion
+
+=== Type Matching Rules
+
+==== Type MPI_CHARACTER
+
+=== Data Conversion
+
+== Communication Modes
+
+== Semantics of Point-to-Point Communication
+
+== Buffer Allocation and Usage
+
+=== Model Implementation of Buffered Mode
+
+== Nonblocking Communication
+
+=== Communication Request Objects
+
+=== Communication Initiation
+
+=== Communication Completion
+
+=== Semantics of Nonblocking Communications
+
+=== Multiple Completions
+
+=== Non-Destructive Test of status
+
+=== Probe and Cancel
+
+=== Probe
+
+=== Matching Probe
+
+=== Matched Receives
+
+=== Cancel
+
+== Persistent Communication Requests
+
+== Null Processes
+
+= Partitioned Point-to-Point Communication
+
+== Introduction
+
+== Semantics of Partitioned Point-to-Point Communication
+
+=== Communication Initialization and Starting with Partitioning
+
+=== Communication Completion under Partitioning
+
+=== Semantics of Communications in Partitioned Mode
+
+== Partitioned Communication Examples
+
+=== Partition Communication with Threads/Tasks Using OpenMP 4.0 or later
+
+=== Send-only Partitioning Example with Tasks and OpenMP version 4.0 or later
+
+=== Send and Receive Partitioning Example with OpenMP version 4.0 or later
+
+= Datatypes
+
+== Derived Datatypes
+
+=== Type Constructors with Explicit Addresses
+
+=== Datatype Constructors
+
+=== Subarray Datatype Constructor
+
+=== Distributed Array Datatype Constructor
+
+=== Address and Size Functions
+
+=== Lower-Bound and Upper-Bound Markers
+
+=== Extent and Bounds of Datatypes
+
+=== True Extent of Datatypes
+
+=== Commit and Free
+
+=== Duplicating a Datatype
+
+=== Use of General Datatypes in Communication
+
+=== Correct Use of Addresses
+
+=== Decoding a Datatype
 
 === Examples
 
-== Point-to-Point Communication
+== Pack and Unpack
 
-=== Introduction
+== Canonical MPI_PACK and MPI_UNPACK
 
-=== Blocking Send and Receive Operations
+= Collective Communication
 
-==== Blocking Send
+== Introduction and Overview
 
-==== Message Data
+== Communicator Argument
 
-==== Message Envelope
+=== Specifics for Intra-Communicator Collective Operations
 
-==== Blocking Receive
+=== Applying Collective Operations to Inter-Communicators
 
-==== Return Status
+=== Specifics for Inter-Communicator Collective Operations
 
-==== Passing MPI_STATUS_IGNORE for Status
+== Barrier Synchronization
 
-==== Blocking Send-Receive
+== Broadcast
 
-=== Datatype Matching and Data Conversion
+=== Example using MPI_BCAST
 
-==== Type Matching Rules
+== Gather
 
-===== Type MPI_CHARACTER
+=== Examples using MPI_GATHER, MPI_GATHERV
 
-==== Data Conversion
+== Scatter
 
-=== Communication Modes
+=== Examples using MPI_SCATTER, MPI_SCATTERV
 
-=== Semantics of Point-to-Point Communication
+== Gather-to-all
 
-=== Buffer Allocation and Usage
+=== Example using MPI_ALLGATHER
 
-==== Model Implementation of Buffered Mode
+== All-to-All Scatter/Gather
 
-=== Nonblocking Communication
+== Global Reduction Operations
 
-==== Communication Request Objects
+=== Reduce
 
-==== Communication Initiation
+=== Predefined Reduction Operations
 
-==== Communication Completion
+=== Signed Characters and Reductions
 
-==== Semantics of Nonblocking Communications
+=== MINLOC and MAXLOC
 
-==== Multiple Completions
+=== User-Defined Reduction Operations
 
-==== Non-Destructive Test of status
+==== Example of User-Defined Reduce
 
-==== Probe and Cancel
+=== All-Reduce
 
-==== Probe
+=== Process-Local Reduction
 
-==== Matching Probe
+== Reduce-Scatter
 
-==== Matched Receives
+=== MPI_REDUCE_SCATTER_BLOCK
 
-==== Cancel
+=== MPI_REDUCE_SCATTER
 
-=== Persistent Communication Requests
+== Scan
 
-=== Null Processes
+=== Inclusive Scan
 
-== Partitioned Point-to-Point Communication
+=== Exclusive Scan
 
-=== Introduction
+=== Example using MPI_SCAN
 
-=== Semantics of Partitioned Point-to-Point Communication
+== Nonblocking Collective Operations
 
-==== Communication Initialization and Starting with Partitioning
+=== Nonblocking Barrier Synchronization
 
-==== Communication Completion under Partitioning
+=== Nonblocking Broadcast
 
-==== Semantics of Communications in Partitioned Mode
+==== Example using MPI_IBCAST
 
-=== Partitioned Communication Examples
+=== Nonblocking Gather
 
-==== Partition Communication with Threads/Tasks Using OpenMP 4.0 or later
+=== Nonblocking Scatter
 
-==== Send-only Partitioning Example with Tasks and OpenMP version 4.0 or later
+=== Nonblocking Gather-to-all
 
-==== Send and Receive Partitioning Example with OpenMP version 4.0 or later
+=== Nonblocking All-to-All Scatter/Gather
 
-== Datatypes
+=== Nonblocking Reduce
 
-=== Derived Datatypes
+=== Nonblocking All-Reduce
 
-==== Type Constructors with Explicit Addresses
+=== Nonblocking Reduce-Scatter with Equal Blocks
 
-==== Datatype Constructors
+=== Nonblocking Reduce-Scatter
 
-==== Subarray Datatype Constructor
+=== Nonblocking Inclusive Scan
 
-==== Distributed Array Datatype Constructor
+=== Nonblocking Exclusive Scan
 
-==== Address and Size Functions
+== Persistent Collective Operations
 
-==== Lower-Bound and Upper-Bound Markers
+=== Persistent Barrier Synchronization
 
-==== Extent and Bounds of Datatypes
+=== Persistent Broadcast
 
-==== True Extent of Datatypes
+=== Persistent Gather
 
-==== Commit and Free
+=== Persistent Scatter
 
-==== Duplicating a Datatype
+=== Persistent Gather-to-all
 
-==== Use of General Datatypes in Communication
+=== Persistent All-to-All Scatter/Gather
 
-==== Correct Use of Addresses
+=== Persistent Reduce
 
-==== Decoding a Datatype
+=== Persistent All-Reduce
 
-==== Examples
+=== Persistent Reduce-Scatter with Equal Blocks
 
-=== Pack and Unpack
+=== Persistent Reduce-Scatter
 
-=== Canonical MPI_PACK and MPI_UNPACK
+=== Persistent Inclusive Scan
 
-== Collective Communication
+=== Persistent Exclusive Scan
 
-=== Introduction and Overview
+== Correctness
 
-=== Communicator Argument
+= Groups, Contexts, Communicators, and Caching
 
-==== Specifics for Intra-Communicator Collective Operations
+== Introduction
 
-==== Applying Collective Operations to Inter-Communicators
+=== Features Needed to Support Libraries
 
-==== Specifics for Inter-Communicator Collective Operations
+=== MPI’s Support for Libraries
 
-=== Barrier Synchronization
+== Basic Concepts
 
-=== Broadcast
+=== Groups
 
-==== Example using MPI_BCAST
+=== Contexts
 
-=== Gather
+=== Intra-Communicators
 
-==== Examples using MPI_GATHER, MPI_GATHERV
+=== Predefined Intra-Communicators
 
-=== Scatter
+== Group Management
 
-==== Examples using MPI_SCATTER, MPI_SCATTERV
+=== Group Accessors
 
-=== Gather-to-all
+=== Group Constructors
 
-==== Example using MPI_ALLGATHER
+=== Group Destructors
 
-=== All-to-All Scatter/Gather
+== Communicator Management
 
-=== Global Reduction Operations
+=== Communicator Accessors
 
-==== Reduce
+=== Communicator Constructors
 
-==== Predefined Reduction Operations
+=== Communicator Destructors
 
-==== Signed Characters and Reductions
+=== Communicator Info
 
-==== MINLOC and MAXLOC
+== Motivating Examples
 
-==== User-Defined Reduction Operations
+=== Current Practice #1
 
-===== Example of User-Defined Reduce
+=== Current Practice #2
 
-==== All-Reduce
+=== (Approximate) Current Practice #3
 
-==== Process-Local Reduction
+=== Communication Safety Example
 
-=== Reduce-Scatter
+=== Library Example #1
 
-==== MPI_REDUCE_SCATTER_BLOCK
+=== Library Example #2
 
-==== MPI_REDUCE_SCATTER
+== Inter-Communication
 
-=== Scan
+=== Inter-Communicator Accessors
 
-==== Inclusive Scan
+=== Inter-Communicator Operations
 
-==== Exclusive Scan
+=== Inter-Communication Examples
 
-==== Example using MPI_SCAN
+==== Example 1: Three-Group "Pipeline"
 
-=== Nonblocking Collective Operations
+==== Example 2: Three-Group "Ring"
 
-==== Nonblocking Barrier Synchronization
+== Caching
 
-==== Nonblocking Broadcast
+=== Functionality
 
-===== Example using MPI_IBCAST
+=== Communicators
 
-==== Nonblocking Gather
+=== Windows
 
-==== Nonblocking Scatter
+=== Datatypes
 
-==== Nonblocking Gather-to-all
+=== Error Class for Invalid Keyval
 
-==== Nonblocking All-to-All Scatter/Gather
+=== Attributes Example
 
-==== Nonblocking Reduce
+== Naming Objects
 
-==== Nonblocking All-Reduce
+== Formalizing the Loosely Synchronous Model
 
-==== Nonblocking Reduce-Scatter with Equal Blocks
+=== Basic Statements
 
-==== Nonblocking Reduce-Scatter
+=== Models of Execution
 
-==== Nonblocking Inclusive Scan
+==== Static Communicator Allocation
 
-==== Nonblocking Exclusive Scan
+==== Dynamic Communicator Allocation
 
-=== Persistent Collective Operations
+==== The General Case
 
-==== Persistent Barrier Synchronization
+= Process Topologies
 
-==== Persistent Broadcast
+== Introduction
 
-==== Persistent Gather
+== Virtual Topologies
 
-==== Persistent Scatter
+== Embedding in MPI
 
-==== Persistent Gather-to-all
+== Overview of the Functions
 
-==== Persistent All-to-All Scatter/Gather
+== Topology Constructors
 
-==== Persistent Reduce
+=== Cartesian Constructor
 
-==== Persistent All-Reduce
+=== Cartesian Convenience Function: MPI_DIMS_CREATE
 
-==== Persistent Reduce-Scatter with Equal Blocks
+=== Graph Constructor
 
-==== Persistent Reduce-Scatter
+=== Distributed Graph Constructor
 
-==== Persistent Inclusive Scan
+=== Topology Inquiry Functions
 
-==== Persistent Exclusive Scan
+=== Cartesian Shift Coordinates
 
-=== Correctness
+=== Partitioning of Cartesian Structures
 
-== Groups, Contexts, Communicators, and Caching
+=== Low-Level Topology Functions
 
-=== Introduction
+== Neighborhood Collective Communication
 
-==== Features Needed to Support Libraries
+=== Neighborhood Gather
 
-==== MPI’s Support for Libraries
+=== Neighbor Alltoall
 
-=== Basic Concepts
+== Nonblocking Neighborhood Communication
 
-==== Groups
+=== Nonblocking Neighborhood Gather
 
-==== Contexts
+=== Nonblocking Neighborhood Alltoall
 
-==== Intra-Communicators
+== Persistent Neighborhood Communication
 
-==== Predefined Intra-Communicators
+=== Persistent Neighborhood Gather
 
-=== Group Management
+=== Persistent Neighborhood Alltoall
 
-==== Group Accessors
+== An Application Example
 
-==== Group Constructors
+= MPI Environmental Management
 
-==== Group Destructors
+== Implementation Information
 
-=== Communicator Management
+=== Version Inquiries
 
-==== Communicator Accessors
+=== Environmental Inquiries
 
-==== Communicator Constructors
+==== Tag Values
 
-==== Communicator Destructors
+==== Host Rank
 
-==== Communicator Info
+==== IO Rank
 
-=== Motivating Examples
+==== Clock Synchronization
 
-==== Current Practice #1
+==== Inquire Processor Name
 
-==== Current Practice #2
+== Memory Allocation
 
-==== (Approximate) Current Practice #3
+== Error Handling
 
-==== Communication Safety Example
+=== Error Handlers for Communicators
 
-==== Library Example #1
+=== Error Handlers for Windows
 
-==== Library Example #2
+=== Error Handlers for Files
 
-=== Inter-Communication
+=== Error Handlers for Sessions
 
-==== Inter-Communicator Accessors
+=== Freeing Errorhandlers and Retrieving Error Strings
 
-==== Inter-Communicator Operations
+== Error Codes and Classes
 
-==== Inter-Communication Examples
+== Error Classes, Error Codes, and Error Handlers
 
-===== Example 1: Three-Group "Pipeline"
+== Timers and Synchronization
 
-===== Example 2: Three-Group "Ring"
+= The Info Object
 
-=== Caching
+= Process Initialization, Creation, and Management
 
-==== Functionality
+== Introduction
 
-==== Communicators
+== The World Model
 
-==== Windows
+=== Starting MPI Processes
 
-==== Datatypes
+=== Finalizing MPI
 
-==== Error Class for Invalid Keyval
+=== Determining Whether MPI Has Been Initialized When Using the World Model
 
-==== Attributes Example
+=== Allowing User Functions at MPI Finalization
 
-=== Naming Objects
+== The Sessions Model
 
-=== Formalizing the Loosely Synchronous Model
+=== Session Creation and Destruction Methods
 
-==== Basic Statements
+=== Processes Sets
 
-==== Models of Execution
+=== Runtime Query Functions
 
-===== Static Communicator Allocation
+=== Sessions Model Examples
 
-===== Dynamic Communicator Allocation
+== Common Elements of Both Process Models
 
-===== The General Case
+=== MPI Functionality that is Always Available
 
-== Process Topologies
+=== Aborting MPI Processes
 
-=== Introduction
+== Portable MPI Process Startup
 
-=== Virtual Topologies
+== MPI and Threads
 
-=== Embedding in MPI
+=== General
 
-=== Overview of the Functions
+=== Clarifications
 
-=== Topology Constructors
+== The Dynamic Process Model
 
-==== Cartesian Constructor
+=== Starting Processes
 
-==== Cartesian Convenience Function: MPI_DIMS_CREATE
+=== The Runtime Environment
 
-==== Graph Constructor
+== Process Manager Interface
 
-==== Distributed Graph Constructor
+=== Processes in MPI
 
-==== Topology Inquiry Functions
+=== Starting Processes and Establishing Communication
 
-==== Cartesian Shift Coordinates
+=== Starting Multiple Executables and Establishing Communication
 
-==== Partitioning of Cartesian Structures
+=== Reserved Keys
 
-==== Low-Level Topology Functions
+=== Spawn Example
 
-=== Neighborhood Collective Communication
+== Establishing Communication
 
-==== Neighborhood Gather
+=== Names, Addresses, Ports, and All That
 
-==== Neighbor Alltoall
+=== Server Routines
 
-=== Nonblocking Neighborhood Communication
+=== Client Routines
 
-==== Nonblocking Neighborhood Gather
+=== Name Publishing
 
-==== Nonblocking Neighborhood Alltoall
+=== Reserved Key Values
 
-=== Persistent Neighborhood Communication
+=== Client/Server Examples
 
-==== Persistent Neighborhood Gather
+== Other Functionality
 
-==== Persistent Neighborhood Alltoall
+=== Universe Size
 
-=== An Application Example
+=== Singleton MPI Initialization
 
-== MPI Environmental Management
+=== MPI_APPNUM
 
-=== Implementation Information
+=== Releasing Connections
 
-==== Version Inquiries
+=== Another Way to Establish MPI Communication
 
-==== Environmental Inquiries
+= One-Sided Communications
 
-===== Tag Values
+== Introduction
 
-===== Host Rank
+== Initialization
 
-===== IO Rank
+=== Window Creation
 
-===== Clock Synchronization
+=== Window That Allocates Memory
 
-===== Inquire Processor Name
+=== Window That Allocates Shared Memory
 
-=== Memory Allocation
+=== Window of Dynamically Attached Memory
 
-=== Error Handling
+=== Window Destruction
 
-==== Error Handlers for Communicators
+=== Window Attributes
 
-==== Error Handlers for Windows
+=== Window Info
 
-==== Error Handlers for Files
+== Communication Calls
 
-==== Error Handlers for Sessions
+=== Put
 
-==== Freeing Errorhandlers and Retrieving Error Strings
+=== Get
 
-=== Error Codes and Classes
+=== Examples for Communication Calls
 
-=== Error Classes, Error Codes, and Error Handlers
+=== Accumulate Functions
 
-=== Timers and Synchronization
+==== Accumulate Function
 
-== The Info Object
+==== Get Accumulate Function
 
-== Process Initialization, Creation, and Management
+==== Fetch and Op Function
 
-=== Introduction
+==== Compare and Swap Function
 
-=== The World Model
+=== Request-based RMA Communication Operations
 
-==== Starting MPI Processes
+== Memory Model
 
-==== Finalizing MPI
+== Synchronization Calls
 
-==== Determining Whether MPI Has Been Initialized When Using the World Model
+=== Fence
 
-==== Allowing User Functions at MPI Finalization
+=== General Active Target Synchronization
 
-=== The Sessions Model
+=== Lock
 
-==== Session Creation and Destruction Methods
+=== Flush and Sync
 
-==== Processes Sets
+=== Assertions
 
-==== Runtime Query Functions
+=== Miscellaneous Clarifications
 
-==== Sessions Model Examples
+== Error Handling
 
-=== Common Elements of Both Process Models
+=== Error Handlers
 
-==== MPI Functionality that is Always Available
+=== Error Classes
 
-==== Aborting MPI Processes
+== Semantics and Correctness
 
-=== Portable MPI Process Startup
+=== Atomicity
 
-=== MPI and Threads
+=== Ordering
 
-==== General
+=== Progress
 
-==== Clarifications
+=== Registers and Compiler Optimizations
 
-=== The Dynamic Process Model
+== Examples
 
-==== Starting Processes
+= External Interfaces
 
-==== The Runtime Environment
+== Introduction
 
-=== Process Manager Interface
-
-==== Processes in MPI
-
-==== Starting Processes and Establishing Communication
-
-==== Starting Multiple Executables and Establishing Communication .
-
-==== Reserved Keys
-
-==== Spawn Example
-
-=== Establishing Communication
-
-==== Names, Addresses, Ports, and All That
-
-==== Server Routines
-
-==== Client Routines
-
-==== Name Publishing
-
-==== Reserved Key Values
-
-==== Client/Server Examples
-
-=== Other Functionality
-
-==== Universe Size
-
-==== Singleton MPI Initialization
-
-==== MPI_APPNUM
-
-==== Releasing Connections
-
-==== Another Way to Establish MPI Communication
-
-== One-Sided Communications
-
-=== Introduction
-
-=== Initialization
-
-==== Window Creation
-
-==== Window That Allocates Memory
-
-==== Window That Allocates Shared Memory
-
-==== Window of Dynamically Attached Memory
-
-==== Window Destruction
-
-==== Window Attributes
-
-==== Window Info
-
-=== Communication Calls
-
-==== Put
-
-==== Get
-
-==== Examples for Communication Calls
-
-==== Accumulate Functions
-
-===== Accumulate Function
-
-===== Get Accumulate Function
-
-===== Fetch and Op Function
-
-===== Compare and Swap Function
-
-==== Request-based RMA Communication Operations
-
-=== Memory Model
-
-=== Synchronization Calls
-
-==== Fence
-
-==== General Active Target Synchronization
-
-==== Lock
-
-==== Flush and Sync
-
-==== Assertions
-
-==== Miscellaneous Clarifications
-
-=== Error Handling
-
-==== Error Handlers
-
-==== Error Classes
-
-=== Semantics and Correctness
-
-==== Atomicity
-
-==== Ordering
-
-==== Progress
-
-==== Registers and Compiler Optimizations
+== Generalized Requests
 
 === Examples
 
-== External Interfaces
+== Associating Information with Status
 
-=== Introduction
+= I/O
 
-=== Generalized Requests
+== Introduction
 
-==== Examples
+=== Definitions
 
-=== Associating Information with Status
+== File Manipulation
 
-== I/O
+=== Opening a File
 
-=== Introduction
+=== Closing a File
 
-==== Definitions
+=== Deleting a File
 
-=== File Manipulation
+=== Resizing a File
 
-==== Opening a File
+=== Preallocating Space for a File
 
-==== Closing a File
+=== Querying the Size of a File
 
-==== Deleting a File
+=== Querying File Parameters
 
-==== Resizing a File
+=== File Info
 
-==== Preallocating Space for a File
+==== Reserved File Hints
 
-==== Querying the Size of a File
+== File Views
 
-==== Querying File Parameters
+== Data Access
 
-==== File Info
+=== Data Access Routines
 
-===== Reserved File Hints
+==== Positioning
 
-=== File Views
+==== Synchronism
 
-=== Data Access
+==== Coordination
 
-==== Data Access Routines
+==== Data Access Conventions
 
-===== Positioning
+=== Data Access with Explicit Offsets
 
-===== Synchronism
+=== Data Access with Individual File Pointers
 
-===== Coordination
+=== Data Access with Shared File Pointers
 
-===== Data Access Conventions
+==== Noncollective Operations
 
-==== Data Access with Explicit Offsets
+==== Collective Operations
 
-==== Data Access with Individual File Pointers
+==== Seek
 
-==== Data Access with Shared File Pointers
+=== Split Collective Data Access Routines
 
-===== Noncollective Operations
+== File Interoperability
 
-===== Collective Operations
+=== Datatypes for File Interoperability
 
-===== Seek
+=== External Data Representation: "external32"
 
-==== Split Collective Data Access Routines
+=== User-Defined Data Representations
 
-=== File Interoperability
+==== Extent Callback
 
-==== Datatypes for File Interoperability
+==== Datarep Conversion Functions
 
-==== External Data Representation: "external32"
+=== Matching Data Representations
 
-==== User-Defined Data Representations
+== Consistency and Semantics
 
-===== Extent Callback
+=== File Consistency
 
-===== Datarep Conversion Functions
+=== Random Access vs. Sequential Files
 
-==== Matching Data Representations
+=== Progress
 
-=== Consistency and Semantics
+=== Collective File Operations
 
-==== File Consistency
+=== Nonblocking Collective File Operations
 
-==== Random Access vs. Sequential Files
+=== Type Matching
 
-==== Progress
+=== Miscellaneous Clarifications
 
-==== Collective File Operations
+=== MPI_Offset Type
 
-==== Nonblocking Collective File Operations
+=== Logical vs. Physical File Layout
 
-==== Type Matching
-
-==== Miscellaneous Clarifications
-
-==== MPI_Offset Type
-
-==== Logical vs. Physical File Layout
-
-==== File Size
-
-==== Examples
-
-===== Asynchronous I/O
-
-=== I/O Error Handling
-
-=== I/O Error Classes
+=== File Size
 
 === Examples
 
-==== Double Buffering with Split Collective I/O
+==== Asynchronous I/O
 
-==== Subarray Filetype Constructor
+== I/O Error Handling
 
-== Tool Support
+== I/O Error Classes
 
-=== Introduction
+== Examples
+
+=== Double Buffering with Split Collective I/O
+
+=== Subarray Filetype Constructor
+
+= Tool Support
+
+== Introduction
+
+== Profiling Interface
+
+=== Requirements
+
+=== Discussion
+
+=== Logic of the Design
+
+=== Miscellaneous Control of Profiling
+
+=== MPI Library Implementation
+
+=== Complications
+
+=== Multiple Levels of Interception
+
+== The MPI Tool Information Interface
+
+=== Verbosity Levels
+
+=== Binding MPI Tool Information Interface Variables to MPI Objects
+
+=== Convention for Returning Strings
+
+=== Initialization and Finalization
+
+=== Datatype System
+
+=== Control Variables
+
+=== Performance Variables
+
+==== Performance Variable Classes
+
+==== Performance Variable Query Functions
+
+==== Performance Experiment Sessions
+
+==== Handle Allocation and Deallocation
+
+==== Starting and Stopping of Performance Variables
+
+==== Performance Variable Access Functions
+
+=== Events
+
+==== Event Sources
+
+==== Callback Safety Requirements
+
+==== Event Type Query Functions
+
+==== Handle Allocation and Deallocation
+
+==== Handling Dropped Events
+
+==== Reading Event Data
+
+==== Reading Event Meta Data
+
+=== Variable Categorization
+
+==== Category Query Functions
+
+==== Category Member Query Functions
+
+=== Return Codes for the MPI Tool Information Interface
 
 === Profiling Interface
 
-==== Requirements
+= Deprecated Interfaces
 
-==== Discussion
+== Deprecated since MPI-2.0
 
-==== Logic of the Design
+== Deprecated since MPI-2.2
 
-==== Miscellaneous Control of Profiling
+== Deprecated since MPI-4.0
 
-==== MPI Library Implementation
+= Removed Interfaces
 
-==== Complications
+== Removed MPI-1 Bindings
 
-==== Multiple Levels of Interception
+=== Overview
 
-=== The MPI Tool Information Interface
+=== Removed MPI-1 Functions
 
-==== Verbosity Levels
+=== Removed MPI-1 Datatypes
 
-==== Binding MPI Tool Information Interface Variables to MPI Objects
+=== Removed MPI-1 Constants
 
-==== Convention for Returning Strings
+=== Removed MPI-1 Callback Prototypes
 
-==== Initialization and Finalization
+== C++ Bindings
 
-==== Datatype System
+= Semantic Changes and Warnings
+== Semantic Changes
 
-==== Control Variables
+=== Semantic Changes Starting in MPI-4.0
 
-==== Performance Variables
+== Additional Warnings
 
-===== Performance Variable Classes
+=== Warnings Starting in MPI-4.0
 
-===== Performance Variable Query Functions
+= Language Bindings
 
-===== Performance Experiment Sessions
+== Support for Fortran
 
-===== Handle Allocation and Deallocation
+=== Overview
 
-===== Starting and Stopping of Performance Variables
+=== Fortran Support Through the mpi_f08 Module
 
-===== Performance Variable Access Functions
+=== Fortran Support Through the mpi Module
 
-==== Events
+=== Fortran Support Through the mpif.h Include File
 
-===== Event Sources
+=== Interface Specifications, Procedure Names, and the Profiling Interface
 
-===== Callback Safety Requirements
+=== MPI for Different Fortran Standard Versions
 
-===== Event Type Query Functions
+=== Requirements on Fortran Compilers
 
-===== Handle Allocation and Deallocation
+=== Additional Support for Fortran Register-Memory-Synchronization
 
-===== Handling Dropped Events
+=== Additional Support for Fortran Numeric Intrinsic Types
 
-===== Reading Event Data
+==== Parameterized Datatypes with Specified Precision and Exponent
 
-===== Reading Event Meta Data
+==== Range
 
-==== Variable Categorization
+==== Support for Size-specific MPI Datatypes
 
-===== Category Query Functions
+==== Communication With Size-specific Types
 
-===== Category Member Query Functions
+=== Problems With Fortran Bindings for MPI
 
-==== Return Codes for the MPI Tool Information Interface
+=== Problems Due to Strong Typing
 
-==== Profiling Interface
+=== Problems Due to Data Copying and Sequence Association with Subscript Triplets
 
-== Deprecated Interfaces
+=== Problems Due to Data Copying and Sequence Association with Vector Subscripts
 
-=== Deprecated since MPI-2.0
+=== Special Constants
 
-=== Deprecated since MPI-2.2
-=== Deprecated since MPI-4.0
+=== Fortran Derived Types
 
-== Removed Interfaces
+=== Optimization Problems, an Overview
 
-=== Removed MPI-1 Bindings
+=== Problems with Code Movement and Register Optimization
 
-==== Overview
+==== Nonblocking Operations
 
-==== Removed MPI-1 Functions
+==== Persistent Operations
 
-==== Removed MPI-1 Datatypes
+==== One-sided Communication
 
-==== Removed MPI-1 Constants
+==== MPI_BOTTOM and Combining Independent Variables in Datatypes
 
-==== Removed MPI-1 Callback Prototypes
+==== Solutions
 
-=== C++ Bindings
+==== The Fortran ASYNCHRONOUS Attribute
 
-== Semantic Changes and Warnings
-=== Semantic Changes
+==== Calling MPI_F_SYNC_REG
 
-==== Semantic Changes Starting in MPI-4.0
+==== A User Defined Routine Instead of MPI_F_SYNC_REG
 
-=== Additional Warnings
+==== Module Variables and COMMON Blocks
 
-==== Warnings Starting in MPI-4.0
+==== The (Poorly Performing) Fortran VOLATILE Attribute
 
-== Language Bindings
+==== The Fortran TARGET Attribute
 
-=== Support for Fortran
+=== Temporary Data Movement and Temporary Memory Modification
 
-==== Overview
+=== Permanent Data Movement
 
-==== Fortran Support Through the mpi_f08 Module
+=== Comparison with C
 
-==== Fortran Support Through the mpi Module
+== Support for Large Count and Large Byte Displacement
 
-==== Fortran Support Through the mpif.h Include File
+== Language Interoperability
 
-==== Interface Specifications, Procedure Names, and the Profiling Interface798
+=== Introduction
 
-==== MPI for Different Fortran Standard Versions
+=== Assumptions
 
-==== Requirements on Fortran Compilers
+=== Initialization
 
-==== Additional Support for Fortran Register-Memory-Synchronization 808
+=== Transfer of Handles
 
-==== Additional Support for Fortran Numeric Intrinsic Types
+=== Status
 
-===== Parameterized Datatypes with Specified Precision and Exponent
+=== MPI Opaque Objects
 
-===== Range
+==== Datatypes
 
-===== Support for Size-specific MPI Datatypes
+==== Callback Functions
 
-===== Communication With Size-specific Types
+==== Error Handlers
 
-==== Problems With Fortran Bindings for MPI
+==== Reduce Operations
 
-==== Problems Due to Strong Typing
+=== Attributes
 
-==== Problems Due to Data Copying and Sequence Association with Subscript Triplets
+=== Extra-State
 
-==== Problems Due to Data Copying and Sequence Association with Vector Subscripts
+=== Constants
 
-==== Special Constants
+=== Interlanguage Communication
 
-==== Fortran Derived Types
+= Language Bindings Summary
 
-==== Optimization Problems, an Overview
+== Defined Values and Handles
 
-==== Problems with Code Movement and Register Optimization
+=== Defined Constants
 
-===== Nonblocking Operations
+=== Types
 
-===== Persistent Operations
+=== Prototype Definitions
 
-===== One-sided Communication
+==== C Bindings
 
-===== MPI_BOTTOM and Combining Independent Variables in Datatypes 827
+==== Fortran 2008 Bindings with the mpi_f08 Module
 
-===== Solutions
+==== Fortran Bindings with mpif.h or the mpi Module
 
-===== The Fortran ASYNCHRONOUS Attribute
+=== Deprecated Prototype Definitions
 
-===== Calling MPI_F_SYNC_REG
+=== String Values
 
-===== A User Defined Routine Instead of MPI_F_SYNC_REG
+==== Default Communicator Names
 
-===== Module Variables and COMMON Blocks
+==== Reserved Data Representations
 
-===== The (Poorly Performing) Fortran VOLATILE Attribute
+==== Process Set Names
 
-===== The Fortran TARGET Attribute
+==== Info Keys
 
-==== Temporary Data Movement and Temporary Memory Modification 832
+==== Info Values
 
-==== Permanent Data Movement
+== Summary of the Semantics of all Op.-Related Routines
 
-==== Comparison with C
+== C Bindings
 
-=== Support for Large Count and Large Byte Displacement
+=== Point-to-Point Communication C Bindings
 
-=== Language Interoperability
+=== Partitioned Communication C Bindings
 
-==== Introduction
+=== Datatypes C Bindings
 
-==== Assumptions
+=== Collective Communication C Bindings
 
-==== Initialization
+=== Groups, Contexts, Communicators, and Caching C Bindings
 
-==== Transfer of Handles
+=== Process Topologies C Bindings
 
-==== Status
+=== MPI Environmental Management C Bindings
 
-==== MPI Opaque Objects
+=== The Info Object C Bindings
 
-===== Datatypes
+=== Process Creation and Management C Bindings
 
-===== Callback Functions
+=== One-Sided Communications C Bindings
 
-===== Error Handlers
+=== External Interfaces C Bindings
 
-===== Reduce Operations
+=== I/O C Bindings
 
-==== Attributes
+=== Language Bindings C Bindings
 
-==== Extra-State
+=== Tools / Profiling Interface C Bindings
 
-==== Constants
+=== Tools / MPI Tool Information Interface C Bindings
 
-==== Interlanguage Communication
+=== Deprecated C Bindings
 
-== Language Bindings Summary
+== Fortran 2008 Bindings with the mpi_f08 Module
 
-=== Defined Values and Handles
+=== Point-to-Point Communication Fortran 2008 Bindings
 
-==== Defined Constants
+=== Partitioned Communication Fortran 2008 Bindings
 
-==== Types
+=== Datatypes Fortran 2008 Bindings
 
-==== Prototype Definitions
+=== Collective Communication Fortran 2008 Bindings
 
-===== C Bindings
+=== Groups, Contexts, Communicators, and Caching Fortran 2008 Bindings
 
-===== Fortran 2008 Bindings with the mpi_f08 Module
+=== Process Topologies Fortran 2008 Bindings
 
-===== Fortran Bindings with mpif.h or the mpi Module
+=== MPI Environmental Management Fortran 2008 Bindings
 
-==== Deprecated Prototype Definitions
+=== The Info Object Fortran 2008 Bindings
 
-==== String Values
+=== Process Creation and Management Fortran 2008 Bindings
 
-===== Default Communicator Names
+=== One-Sided Communications Fortran 2008 Bindings
 
-===== Reserved Data Representations
+=== External Interfaces Fortran 2008 Bindings
 
-===== Process Set Names
+=== I/O Fortran 2008 Bindings
 
-===== Info Keys
+=== Language Bindings Fortran 2008 Bindings
 
-===== Info Values
+=== Tools / Profiling Interface Fortran 2008 Bindings
 
-=== Summary of the Semantics of all Op.-Related Routines
+=== Deprecated Fortran 2008 Bindings
 
-=== C Bindings
+== Fortran Bindings with mpif.h or the mpi Module
 
-==== Point-to-Point Communication C Bindings
+=== Point-to-Point Communication Fortran Bindings
 
-==== Partitioned Communication C Bindings
+=== Partitioned Communication Fortran Bindings
 
-==== Datatypes C Bindings
+=== Datatypes Fortran Bindings
 
-==== Collective Communication C Bindings
+=== Collective Communication Fortran Bindings
 
-==== Groups, Contexts, Communicators, and Caching C Bindings
+=== Groups, Contexts, Communicators, and Caching Fortran Bindings
 
-==== Process Topologies C Bindings
+=== Process Topologies Fortran Bindings
 
-==== MPI Environmental Management C Bindings
+=== MPI Environmental Management Fortran Bindings
 
-==== The Info Object C Bindings
+=== The Info Object Fortran Bindings
 
-==== Process Creation and Management C Bindings
+=== Process Creation and Management Fortran Bindings
 
-==== One-Sided Communications C Bindings
+=== One-Sided Communications Fortran Bindings
 
-==== External Interfaces C Bindings
+=== External Interfaces Fortran Bindings
 
-==== I/O C Bindings
+=== I/O Fortran Bindings
 
-==== Language Bindings C Bindings
+=== Language Bindings Fortran Bindings
 
-==== Tools / Profiling Interface C Bindings
+=== Tools / Profiling Interface Fortran Bindings
 
-==== Tools / MPI Tool Information Interface C Bindings
+=== Deprecated Fortran Bindings
 
-==== Deprecated C Bindings
+= Change-Log
 
-=== Fortran 2008 Bindings with the mpi_f08 Module
+== Changes from Version 3.1 to Version 4.0
 
-==== Point-to-Point Communication Fortran 2008 Bindings
+=== Fixes to Errata in Previous Versions of MPI
 
-==== Partitioned Communication Fortran 2008 Bindings
+=== Changes in MPI-4.0
 
-==== Datatypes Fortran 2008 Bindings
+== Changes from Version 3.0 to Version 3.1
 
-==== Collective Communication Fortran 2008 Bindings
+=== Fixes to Errata in Previous Versions of MPI
 
-==== Groups, Contexts, Communicators, and Caching Fortran 2008 Bindings
+=== Changes in MPI-3.1
 
-==== Process Topologies Fortran 2008 Bindings
+== Changes from Version 2.2 to Version 3.0
 
-==== MPI Environmental Management Fortran 2008 Bindings
+=== Fixes to Errata in Previous Versions of MPI
 
-==== The Info Object Fortran 2008 Bindings
+=== Changes in MPI-3.0
 
-==== Process Creation and Management Fortran 2008 Bindings
+== Changes from Version 2.1 to Version 2.2
 
-==== One-Sided Communications Fortran 2008 Bindings
+== Changes from Version 2.0 to Version 2.1
 
-==== External Interfaces Fortran 2008 Bindings
+= Bibliography
 
-==== I/O Fortran 2008 Bindings
+= Index
 
-==== Language Bindings Fortran 2008 Bindings
+= Constant and Predefined Handle Index
 
-==== Tools / Profiling Interface Fortran 2008 Bindings
+= Declarations Index
 
-==== Deprecated Fortran 2008 Bindings
+= Callback Function Prototype Index
 
-=== Fortran Bindings with mpif.h or the mpi Module
-
-==== Point-to-Point Communication Fortran Bindings
-
-==== Partitioned Communication Fortran Bindings
-
-==== Datatypes Fortran Bindings
-
-==== Collective Communication Fortran Bindings
-
-==== Groups, Contexts, Communicators, and Caching Fortran Bindings 1020
-
-==== Process Topologies Fortran Bindings
-
-==== MPI Environmental Management Fortran Bindings
-
-==== The Info Object Fortran Bindings
-
-==== Process Creation and Management Fortran Bindings
-
-==== One-Sided Communications Fortran Bindings
-
-==== External Interfaces Fortran Bindings
-
-==== I/O Fortran Bindings
-
-==== Language Bindings Fortran Bindings
-
-==== Tools / Profiling Interface Fortran Bindings
-
-==== Deprecated Fortran Bindings
-
-== Change-Log
-
-=== Changes from Version 3.1 to Version 4.0
-
-==== Fixes to Errata in Previous Versions of MPI
-
-==== Changes in MPI-4.0
-
-=== Changes from Version 3.0 to Version 3.1
-
-==== Fixes to Errata in Previous Versions of MPI
-
-==== Changes in MPI-3.1
-
-=== Changes from Version 2.2 to Version 3.0
-
-==== Fixes to Errata in Previous Versions of MPI
-
-==== Changes in MPI-3.0
-
-=== Changes from Version 2.1 to Version 2.2
-
-=== Changes from Version 2.0 to Version 2.1
-
-== Chapter Bibliography
-
-== Index
-
-== Index
-
-== Constant and Predefined Handle Index
-
-== Declarations Index
-
-== Callback Function Prototype Index
-
-== Function Index
-
+= Function Index
