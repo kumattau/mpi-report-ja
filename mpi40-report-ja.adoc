@@ -894,7 +894,7 @@ MPIは、セクション9.5で定義されているように、ユーザが新�
 
 ==== Starting Processes and Establishing Communication
 
-==== Starting Multiple Executables and Establishing Communication .
+==== Starting Multiple Executables and Establishing Communication
 
 ==== Reserved Keys
 
@@ -1193,6 +1193,7 @@ MPIは、セクション9.5で定義されているように、ユーザが新�
 === Deprecated since MPI-2.0
 
 === Deprecated since MPI-2.2
+
 === Deprecated since MPI-4.0
 
 == Removed Interfaces
@@ -1212,6 +1213,7 @@ MPIは、セクション9.5で定義されているように、ユーザが新�
 === C++ Bindings
 
 == Semantic Changes and Warnings
+
 === Semantic Changes
 
 ==== Semantic Changes Starting in MPI-4.0
@@ -1232,13 +1234,13 @@ MPIは、セクション9.5で定義されているように、ユーザが新�
 
 ==== Fortran Support Through the mpif.h Include File
 
-==== Interface Specifications, Procedure Names, and the Profiling Interface798
+==== Interface Specifications, Procedure Names, and the Profiling Interface
 
 ==== MPI for Different Fortran Standard Versions
 
 ==== Requirements on Fortran Compilers
 
-==== Additional Support for Fortran Register-Memory-Synchronization 808
+==== Additional Support for Fortran Register-Memory-Synchronization
 
 ==== Additional Support for Fortran Numeric Intrinsic Types
 
@@ -1272,7 +1274,7 @@ MPIは、セクション9.5で定義されているように、ユーザが新�
 
 ===== One-sided Communication
 
-===== MPI_BOTTOM and Combining Independent Variables in Datatypes 827
+===== MPI_BOTTOM and Combining Independent Variables in Datatypes
 
 ===== Solutions
 
@@ -1288,7 +1290,7 @@ MPIは、セクション9.5で定義されているように、ユーザが新�
 
 ===== The Fortran TARGET Attribute
 
-==== Temporary Data Movement and Temporary Memory Modification 832
+==== Temporary Data Movement and Temporary Memory Modification
 
 ==== Permanent Data Movement
 
@@ -1434,7 +1436,7 @@ MPIは、セクション9.5で定義されているように、ユーザが新�
 
 ==== Collective Communication Fortran Bindings
 
-==== Groups, Contexts, Communicators, and Caching Fortran Bindings 1020
+==== Groups, Contexts, Communicators, and Caching Fortran Bindings
 
 ==== Process Topologies Fortran Bindings
 
