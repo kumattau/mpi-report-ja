@@ -79,23 +79,23 @@ The internal handle value is identical to the Fortran INTEGER value used in the 
 The operators ".EQ.", ".NE.", "==" and "/=" are overloaded to allow the comparison of these handles.
 The type names are identical to the names in C, except that they are not case sensitive.
 
-USE mpi または INCLUDE 'mpif.h' を使用する Fortran では、すべてのハンドルの型は INTEGER です。
-USE mpi_f08 を使用する Fortran および C では、オブジェクトのカテゴリごとに異なるハンドル型が定義されます。
-USE mpi_f08 を使用する Fortran では、ハンドルは1つの要素 INTEGER :: MPI_VAL です。
-内部ハンドルの値は mpi モジュールと mpif.h で使用される Fortran INTEGER と同じです。
-演算子 ".EQ.", ".NE.", "==", "/=" はこれらのハンドルの比較を可能にするためにオーバーロードされます。
+`USE mpi`または`INCLUDE 'mpif.h'`を使用するFortranでは、すべてのハンドルの型は`INTEGER`です。
+`USE mpi_f08`を使用するFortranおよびC言語では、オブジェクトのカテゴリごとに異なるハンドル型が定義されます。
+`USE mpi_f08`を使用するFortranでは、ハンドルは1つの要素`INTEGER :: MPI_VAL`です。
+内部ハンドルの値は`mpi`モジュールと`mpif.h`で使用されるFortranの`INTEGER`と同じです。
+演算子`.EQ.`, `.NE.`, `==`, `/=`はこれらのハンドルの比較を可能にするためにオーバーロードされます。
 型名は、大文字と小文字を区別しないことを除いて、C言語の型名と同じです。
 
 [source,fortran]
 ----
 TYPE, BIND(C) :: MPI_Comm
- INTEGER :: MPI_VAL
+  INTEGER :: MPI_VAL
 END TYPE MPI_Comm
 ----
 
 The C types must support the use of the assignment and equality operators.
 
-Cの型は、代入演算子と等号演算子の使用をサポートしなければなりません。
+C言語の型は、代入演算子と等号演算子の使用をサポートしなければなりません。
 
 NOTE: *Advice to implementors.*
 In Fortran, the handle can be an index into a table of opaque objects in a system table; in C it can be such an index or a pointer to the object.
@@ -114,9 +114,9 @@ Most compilers use one unit for both, the INTEGER handles and the handles define
 
 NOTE: *根拠*
 Fortranの整数値は等価であるため、アプリケーションはサポートされている3つのFortranメソッド間でMPIハンドルを簡単に変換することができます。
-例えば、整数値のコミュニケータハンドルCOMMはcomm_f08%MPI_VAL=COMMによってcomm_f08 という名前の mpi_f08 コミュニケータハンドルに直接変換することができます。
-INTEGER定義ハンドルとBIND(C)派生型ハンドルの使用方法は異なります: Fortran 2003(およびそれ以降)では、BIND(C)派生型はユーザ定義の共通ブロック内で使用できると定義されていますが、これらのBIND(C)派生型ハンドルに何個の数値記憶ユニットを使用するかはコンパイラの規則次第です。
-ほとんどのコンパイラは、INTEGERハンドルとBIND©派生型として定義されたハンドルの両方に1単位を使用します。
+例えば、整数値のコミュニケータハンドル`COMM`は`comm_f08%MPI_VAL=COMM`によって`comm_f08`という名前の`mpi_f08`コミュニケータハンドルに直接変換することができます。
+`INTEGER`定義ハンドルと`BIND(C)`派生型ハンドルの使用方法は異なります: Fortran 2003（およびそれ以降）では、`BIND(C)`派生型はユーザ定義の共通ブロック内で使用できると定義されていますが、これらの`BIND(C)`派生型ハンドルに何個の数値記憶ユニットを使用するかはコンパイラの規則次第です。
+ほとんどのコンパイラは、`INTEGER`ハンドルと`BIND(C)`派生型として定義されたハンドルの両方に1単位を使用します。
 (根拠終わり)
 
 NOTE: *Advice to users.*
@@ -124,7 +124,7 @@ If a user wants to substitute mpif.h or the mpi module by the mpi_f08 module and
 (End of advice to users.)
 
 NOTE: *ユーザへのアドバイス*
-もし、ユーザが mpif.h または mpi モジュールを mpi_f08 モジュールで置き換えたい場合で、アプリケーションプログラムが Fortran 共通ブロックにハンドルを格納する場合、この共通ブロックを使用するすべてのアプリケーションルーチンで Fortran サポートメソッドを変更する必要があります。
+もし、ユーザが`mpif.h`または`mpi`モジュールを`mpi_f08`モジュールで置き換えたい場合で、アプリケーションプログラムがFortranの共通ブロックにハンドルを格納する場合、この共通ブロックを使用するすべてのアプリケーションルーチンでFortranサポートメソッドを変更する必要があります。
 (ユーザーへのアドバイスの終わり)
 
 Opaque objects are allocated and deallocated by calls that are specific to each object type.
@@ -137,10 +137,10 @@ Comparisons to this constant are used to test for validity of the handle.
 
 不透明オブジェクトは、各オブジェクトタイプに固有の呼び出しによって割り当てと割り当て解除が行われます。
 これらの呼び出しは、オブジェクトが説明されているセクションにリストされています。
-呼び出しは、型が一致する handle 引数を受け取ります。
-allocate呼び出しでは、これはオブジェクトへの有効な参照を返すOUT引数です。
-deallocate呼び出しでは、これは "invalid handle"値で返すINOUT引数です。
-MPIは各オブジェクト型に対して "無効なハンドル"定数を提供します。
+呼び出しは、型が一致するハンドル引数を受け取ります。
+allocate呼び出しでは、これはオブジェクトへの有効な参照を返す`OUT`引数です。
+deallocate呼び出しでは、これは`invalid handle`値で返す`INOUT`引数です。
+MPIは各オブジェクト型に対して 無効なハンドル定数を提供します。
 この定数との比較がハンドルの有効性をテストするために使用されます。
 
 A call to a deallocate routine invalidates the handle and marks the object for deallocation.
@@ -204,7 +204,7 @@ In such cases, the implementation must maintain reference counts, and allocate a
 NOTE: *実装者へのアドバイス*
 不透明オブジェクトの意図されたセマンティクスは、不透明オブジェクトは互いに分離しているということです。そのようなオブジェクトを割り当てるための各呼び出しは、そのオブジェクトに必要なすべての情報をコピーします。
 実装では、コピーの代わりに参照を使用することで、過剰なコピーを避けることができます。
-MPI_COMM_GROUP を呼び出すと、そのグループのコピーではなく、コミュニケータに関連付けられたグループへの参照が返されます。
+`MPI_COMM_GROUP`を呼び出すと、そのグループのコピーではなく、コミュニケータに関連付けられたグループへの参照が返されます。
 このような場合、実装は参照カウントを維持し、オブジェクトがコピーされたかのように見えるようにオブジェクトを割り当てたり、割り当て解除したりしなければなりません。(実装者へのアドバイスはここまで）。
 
 
@@ -219,14 +219,14 @@ Such arguments will have a range of regular values, which is a proper subrange o
 The range of regular values, such as tag, can be queried using environmental inquiry functions, see Chapter 9.
 The range of other values, such as source, depends on values given by other MPI routines (in the case of source it is the communicator size).
 
-MPI手続きは、基本型の引数の特別な値に特別な意味を割り当てることがあります。例えば、tagはポイントツーポイント通信操作の整数値の引数で、MPI_ANY_TAGという特別なワイルドカード値を持ちます。
-このような引数には、対応する基本型の値の範囲の適切な部分範囲である正規値の範囲があります。特殊な値(MPI_ANY_TAGなど)は正規の範囲外となります。
-tagのような正規値の範囲は、環境問い合わせ関数を使用して問い合わせることができます。
-source のような他の値の範囲は、他の MPI ルーチンで与えられた値に依存します (source の場合はコミュニケータサイズです)。
+MPI手続きは、基本型の引数の特別な値に特別な意味を割り当てることがあります。例えば、`tag`はポイントツーポイント通信操作の整数値の引数で、`MPI_ANY_TAG`という特別なワイルドカード値を持ちます。
+このような引数には、対応する基本型の値の範囲の適切な部分範囲である正規値の範囲があります。特殊な値（`MPI_ANY_TAG`など）は正規の範囲外となります。
+`tag`のような正規値の範囲は、環境問い合わせ関数を使用して問い合わせることができます。
+`source`のような他の値の範囲は、他のMPIルーチンで与えられた値に依存します（`source`の場合はコミュニケータサイズです）。
 
 MPI also provides predefined named constant handles, such as MPI_COMM_WORLD.
 
-MPI は MPI_COMM_WORLD のような定義済みの名前付き定数ハンドルも提供します。
+MPIは`MPI_COMM_WORLD`のような定義済みの名前付き定数ハンドルも提供します。
 
 All named constants, with the exceptions noted below for Fortran, can be used in initialization expressions or assignments, but not necessarily in array declarations or as labels in C switch or Fortran select/case statements.
 This implies named constants to be link-time but not necessarily compile-time constants.
@@ -235,16 +235,17 @@ These constants do not change values during execution.
 Opaque objects accessed by constant handles are defined and do not change value between MPI initialization (MPI_INIT) and MPI completion (MPI_FINALIZE).
 The handles themselves are constants and can be also used in initialization expressions or assignments.
 
-すべての名前付き定数は、Fortranの例外を除いて、初期化式や代入で使用することができますが、配列宣言やCのswitch文やFortranのselect/case文のラベルとして使用することはできません。
+すべての名前付き定数は、Fortranの例外を除いて、初期化式や代入で使用することができますが、配列宣言やC言語の`switch`文やFortranの`select/case`文のラベルとして使用することはできません。
 これは、名前付き定数がリンク時定数であることを意味しますが、コンパイル時定数であるとは限りません。
-以下に挙げる名前付き定数は、CでもFortranでもコンパイル時定数であることが要求されます。
+以下に挙げる名前付き定数は、C言語でもFortranでもコンパイル時定数であることが要求されます。
 これらの定数は実行中に値が変わることはありません。
-定数ハンドルによってアクセスされる不透明オブジェクトは、MPI の初期化 (MPI_INIT) から MPI の完了 (MPI_FINALIZE) までの間、値が変化しないように定義されています。
+定数ハンドルによってアクセスされる不透明オブジェクトは、MPIの初期化（`MPI_INIT`）からMPIの完了（MPI_FINALIZE）までの間、値が変化しないように定義されています。
 ハンドル自体は定数であり、初期化式や代入で使用することもできます。
 
 The constants that are required to be compile-time constants (and can thus be used for array length declarations and labels in C switch and Fortran case/select statements) are:
 
-コンパイル時定数として要求される定数(配列の長さの宣言やCのswitchやFortranのcase/select文のラベルに使用できる)は以下の通りです:
+コンパイル時定数として要求される定数（配列の長さの宣言やC言語の`switch`やFortranの`case/select`文のラベルに使用できる）は以下の通りです:
+
 
 [source]
 ----
@@ -294,9 +295,9 @@ Inside the subroutine, this address can be extracted by some mechanism outside t
 
 NOTE: *実装者へのアドバイス*
 Fortranでは、これらの特殊な定数の実装は、Fortran標準外の言語構造を使用する必要があるかもしれません。
-実装がこれらの値を有効なデータと区別することができないため、定数に特別な値を使用する（例えば、PARAMETER文で定義する）ことはできません。
-通常、これらの定数は、ターゲットコンパイラがアドレスによってデータを渡すという事実に依存して、定義済みの静的変数（例えば、MPI宣言されたCOMMONブロック内の変数）として実装されます。
-サブルーチン内部では、このアドレスはFortran標準外の何らかのメカニズム（例えば、Fortranの拡張やCでの関数の実装）によって抽出することができます。
+実装がこれらの値を有効なデータと区別することができないため、定数に特別な値を使用する（例えば、`PARAMETER`文で定義する）ことはできません。
+通常、これらの定数は、ターゲットコンパイラがアドレスによってデータを渡すという事実に依存して、定義済みの静的変数（例えば、MPI宣言された`COMMON`ブロック内の変数）として実装されます。
+サブルーチン内部では、このアドレスはFortran標準外の何らかのメカニズム（例えば、Fortranの拡張やC言語での関数の実装）によって抽出することができます。
 (実装者へのアドバイスの終わり)
 
 
@@ -361,7 +362,7 @@ The user may specify that no error is fatal, and handle error codes returned by 
 Also, the user may provide user-defined error-handling routines, which will be invoked whenever an MPI call returns abnormally.
 The MPI error handling facilities are described in Section 9.3.
 
-CおよびFortranでは、ほとんどすべてのMPIコールは操作の正常終了を示すコードを返します。
+C言語およびFortranでは、ほとんどすべてのMPIコールは操作の正常終了を示すコードを返します。
 MPIコールは可能な限り、コール中にエラーが発生した場合にエラーコードを返します。
 デフォルトでは、MPIライブラリの実行中に検出されたエラーは、ファイル操作を除いて並列計算を中断させます。
 しかし、MPIはユーザがこのデフォルトを変更し、回復可能なエラーを処理するための機構を提供します。
@@ -377,11 +378,11 @@ When MPI_COMM_SELF is not initialized (i.e., before MPI_INIT / MPI_INIT_THREAD, 
 The Sessions Model is described in Section 11.3.
 
 MPIコールがエラー発生時に意味のあるエラーコードを返すことを制限するいくつかの要因があります。
-あるエラー(例えば、メモリエラー)はMPIライブラリとその出力の状態を壊してしまう可能性があります。
+あるエラー（例えば、メモリエラー）はMPIライブラリとその出力の状態を壊してしまう可能性があります。
 一方、エラーの中には、関連する操作が完了した後に検出されるものもあります。
 また、エラーが発生するようなコミュニケータ、ウィンドウ、ファイルが存在しないものもあります。
-そのような場合、ワールドモデル(セクション11.2を参照)を使用する場合、これらのエラーはコミュニケータMPI_COMM_SELF上で発生します。
-MPI_COMM_SELF が初期化されていない場合 (MPI_INIT / MPI_INIT_THREAD の前、MPI_FINALIZE の後、またはセッションズモデルのみを使用している場合)、エラーは初期エラーハンドラ (起動操作中に設定されます。11.8.4 参照) を発生させます。
+そのような場合、ワールドモデル(セクション11.2を参照)を使用する場合、これらのエラーはコミュニケータ`MPI_COMM_SELF`上で発生します。
+`MPI_COMM_SELF`が初期化されていない場合（`MPI_INIT`/`MPI_INIT_THREAD`の前、`MPI_FINALIZE`の後、またはセッションズモデルのみを使用している場合）、エラーは初期エラーハンドラ（起動操作中に設定されます。11.8.4 参照）を発生させます。
 セッションズ・モデルについてはセクション11.3で説明します。
 
 An example of such a case arises because of the nature of asynchronous communications: MPI calls may initiate operations that continue asynchronously after the call returned.
@@ -389,11 +390,12 @@ Thus, the operation may return with a code indicating successful completion, yet
 If there is a subsequent call that relates to the same operation (e.g., a call that verifies that an asynchronous operation has completed) then the error argument associated with this call will be used to indicate the nature of the error.
 In a few cases, the error may occur after all calls that relate to the operation have completed, so that no error value can be used to indicate the nature of the error (e.g., an error on the receiver in a send with the ready mode).
 
-非同期通信の性質上、このようなケースが発生する: MPI呼び出しは、呼び出しが返った後も非同期で継続する操作を開始することがあります。
+非同期通信の性質上、このようなケースが発生します: MPI呼び出しは、呼び出しが返った後も非同期で継続する操作を開始することがあります。
 MPIコールは、コールが返った後も非同期に継続するオペレーションを開始することがあります。
 したがって、オペレーションが正常に完了したことを示すコードで返ったにもかかわらず、後でエラーが発生することがあります。
-同じ操作に関連する後続の呼び出し(例えば、非同期操作が完了したことを確認する呼び出し)がある場合、この呼び出しに関連するエラー引数は、エラーの性質を示すために使用されます。
-場合によっては、操作に関連するすべての呼が完了した後にエラーが発生し、 エラー値を使用してエラーの性質を示すことができないことがある(たとえば、 レディモードでの送信における受信側のエラー)。
+同じ操作に関連する後続の呼び出し（例えば、非同期操作が完了したことを確認する呼び出し）がある場合、この呼び出しに関連するエラー引数は、エラーの性質を示すために使用されます。
+場合によっては、操作に関連するすべての呼が完了した後にエラーが発生し、エラー値を使用してエラーの性質を示すことができないことがあります（たとえば、 レディモードでの送信における受信側のエラー）。
+
 
 This document does not specify the state of a computation after an erroneous MPI call has occurred.
 The desired behavior is that a relevant error code be returned, and the effect of the error be localized to the greatest possible extent.
@@ -408,7 +410,7 @@ For example, MPI specifies strict type matching rules between matching send and 
 Implementations may go beyond these type matching rules, and provide automatic type conversion in such situations.
 It will be helpful to generate warnings for such nonconforming behavior.
 
-実装は、ここで誤りと定義されているMPIコールを意味のある形でサポートするために、このドキュメントを越えてもよい。
+実装は、ここで誤りと定義されているMPIコールを意味のある形でサポートするために、このドキュメントを越えてもよいです。
 例えば、MPIは送信操作と受信操作のマッチングに厳格な型マッチングルールを規定しています: 浮動小数点変数を送信して整数を受信することは誤りです。
 実装は、これらの型照合ルールを超えて、そのような状況で自動的な型変換を提供するかもしれません。
 そのような不適合な動作に対する警告を生成することは有益だと思います。
@@ -416,7 +418,6 @@ It will be helpful to generate warnings for such nonconforming behavior.
 MPI defines a way for users to create new error codes as defined in Section 9.5.
 
 MPIは、セクション9.5で定義されているように、ユーザが新しいエラーコードを作成する方法を定義しています。
-
 
 === Implementation Issues
 
